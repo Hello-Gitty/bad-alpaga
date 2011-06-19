@@ -1,6 +1,4 @@
-package org.badalpaga.org.badalpaga.dice;
-
-import java.security.PrivateKey;
+package org.badalpaga.dice;
 
 /**
  * User: Hello-Gitty
@@ -11,13 +9,13 @@ public interface Dice<E> {
 
     /**
      *
-     * @return the name of the dice
+     * @return the name of the org.badalpaga.dice
      */
     public String getName();
 
     /**
      *
-     * @return if the dice have numeric value
+     * @return if the org.badalpaga.dice have numeric value
      */
     public boolean isNumeric();
 
@@ -30,7 +28,7 @@ public interface Dice<E> {
 
     /**
      *
-     * @return the number of faces of this dice
+     * @return the number of faces of this org.badalpaga.dice
      */
     public int getDiceFacesNumber();
 
