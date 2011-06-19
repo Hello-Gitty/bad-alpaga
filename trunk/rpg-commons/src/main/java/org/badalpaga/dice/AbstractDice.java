@@ -1,4 +1,4 @@
-package org.badalpaga.org.badalpaga.dice;
+package org.badalpaga.dice;
 
 /**
  * User: Hello-Gitty
