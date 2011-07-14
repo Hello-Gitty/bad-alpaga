@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT Fiche (InformationsTextuelles,InformationsNumerics)>
+<!ATTLIST Fiche jeux CDATA #REQUIRED>
+
+	<!ELEMENT InformationsTextuelles (Info|Infos)+>
+
+		<!ELEMENT Infos (Info|Infos)*>
+		<!ATTLIST Infos nom CDATA #REQUIRED>
+		<!ATTLIST Infos editable ( true | false ) "false">
+		
+			<!ELEMENT Info (#PCDATA)>
+			<!ATTLIST Info nom CDATA #REQUIRED>
+			
+	<!ELEMENT InformationsNumerics (Numeric|Numerics|NumericsVal)+>
+	
+		<!ELEMENT Numerics (Numeric|Numerics|NumericsVal)*>
+		<!ATTLIST Numerics nom CDATA #REQUIRED>
+		<!ATTLIST Numerics editable ( true | false ) "false">
+	
+		<!ELEMENT NumericsVal (Numeric|Numerics|NumericsVal)*>
+		<!ATTLIST NumericsVal nom CDATA #REQUIRED>
+		<!ATTLIST NumericsVal valeur CDATA #REQUIRED>
+		<!ATTLIST NumericsVal jauge ( true | false ) "false">
+		<!ATTLIST NumericsVal max CDATA #IMPLIED>
+		<!ATTLIST NumericsVal editable ( true | false ) "false">
+		
+			<!ELEMENT Numeric (#PCDATA)>
+			<!ATTLIST Numeric nom CDATA #REQUIRED>
+			<!ATTLIST Numeric jauge CDATA #IMPLIED>
+			<!ATTLIST Numeric max CDATA #IMPLIED>
