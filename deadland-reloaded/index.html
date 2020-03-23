@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Piocheur de super jeton de la mort qui tue sauf les détérrés - RELOADED</title>
+<script type="text/javascript" src="functions.js"></script>
+<script type="text/javascript" src="deadland.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body onload="init()">
+	<h2>LE PIOCHEUR DE LA MORT RELOADED</h2>
+
+	<h3>Initialisation :</h3>
+	<!--  <input type="button" value="AJOUTER LEGENDAIRE" onclick="putjet('legendaire')" /> -->
+	<label for="ip-legendaire">Jetons Legendaire :</label>
+	<input type="number" id="ip-legendaire" min="0" />
+	<br />
+	<!-- 	<input type="button" value="AJOUTER BLANC" onclick="putjet('blanc')" /> -->
+	<label for="ip-blanc">Jetons Blanc :</label>
+	<input type="number" id="ip-blanc" min="0" />
+	<br />
+	<!--  <input type="button" value="AJOUTER BLEU" onclick="putjet('bleu')" /> -->
+	<label for="ip-bleu">Jetons Bleu :</label>
+	<input type="number" id="ip-bleu" min="0" />
+	<br />
+	<!--  <input type="button" value="AJOUTER ROUGE" onclick="putjet('rouge')" /> -->
+	<label for="ip-rouge">Jetons Rouge :</label>
+	<input type="number" id="ip-rouge" min="0" />
+	<br />
+
+	<br /> Hombre :
+	<input id="ip-hombre" onkeydown="enterHombre()" />
+	<select name="chance" id="luck" onkeydown="enterHombre()">
+		<option value="-2">malchanceux + mauvais rêve</option>
+		<option value="-1">malchanceux / mauvais rêve</option>
+		<option value="0" selected>Normal</option>
+		<option value="1">Chanceux</option>
+		<option value="2">Très chanceux</option>
+		<!-- <option value="-99">Joueur Préféré (kéké)</option> -->
+	</select>
+	<input id="addHombre" type="button" value="AJOUTER" onclick="putHombre()" />
+	<br />
+
+	<br />
+
+	<input id="ip-start" type="button" value="DEBUTER PARTIE" onclick="start()" />
+	<input type="button" onclick="init()" value="RESET" />
+	<br />
+
+	<h3>Sac et Pioche</h3>
+	<div id="sac"></div>
+	<br />
+
+	<div id="tas">NB cartes:<span id="cartes"></span></div>
+	<input type="button" id="restcard" onclick="restcard()" value="NOUVEAU PACKET" />
+	<br />
+
+	<h3>Hombres :</h3>
+	<div id="hombres"></div>
+	<br />
+
+	<h3>Actions :</h3>
+	<select name="who" id="who">
+	</select>
+	<input type="number" id="ip-pioche" min="1" value=1/>
+	<input type="button" id="piochetej" onclick="piocheGJ()" value="PIOCHER JETON" />
+	<input type="button" id="piochetrac" onclick="piocheGC()" value="PIOCHER CARTE" />
+	<br />
+
+
+	<h3>Historique:</h3>
+	<input type="button" onclick="cleanHisto()" value="NETTOYAGE" />
+	<div id="histo-pioche"></div>
+	
+
+	<h2>Légende</h2>
+
+	<div id="legende">
+		<h3>Les Jetons blancs</h3>
+		<ol>
+			S'utilisent:
+			<ul>
+				<li>pour récupérer immédiatement et à tout moment d'un état
+					Secoué (même après un jet de Vigueur raté)</li>
+				<li>pour relancer un jet de Trait en gardant le meilleur
+					résultat</li>
+			</ul>
+		</ol>
+
+		<h3>Les Jetons rouges</h3>
+		<ol>
+			S'utilisent:
+			<ul>
+				<li>pour lancer un d6 et d’ajouter son résultat à ton total (il
+					peut comme d’habitude faire un As)</li>
+				<li>pour annuler un échec critique</li>
+				<li>comme les blancs</li>
+			</ul>
+		</ol>
+
+		<h3>Les Jetons bleus</h3>
+		<ol>
+			S'utilisent:
+			<ul>
+				<li>comme les rouges</li>
+				<li>pour piocher une carte aventure</li>
+			</ul>
+		</ol>
+
+		<h3>Les Jetons légendaires</h3>
+		<ol>
+			Ils sont à usage unique et s'utilisent:
+			<ul>
+				<li>comme un Jeton bleu, et ils ajoutent +2 au total final</li>
+				<li>pour relancer n’importe quel jet – un jet de dégâts, un jet
+					sur une table</li>
+				<li>en fin de la partie, pour obtenir une Prime</li>
+			</ul>
+		</ol>
+	</div>
+
+</body>
+</html>

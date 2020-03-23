@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Piocheur de super jeton de la mort qui tue sauf les détérrés</title>
+<script type="text/javascript" src="functions.js"></script>
+<script type="text/javascript" src="deadland.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body onload="init()">
+<h2>LE PIOCHEUR DE LA MORT</h2>
+
+<input type="button" value="AJOUTER LEGENDAIRE" onclick="putjet('legendaire')" /><input type="number" id="ip-legendaire" /><br/>
+<input type="button" value="AJOUTER BLANC" onclick="putjet('blanc')" /><input type="number" id="ip-blanc" /><br/>
+<input type="button" value="AJOUTER BLEU" onclick="putjet('bleu')" /><input type="number" id="ip-bleu" /><br/>
+<input type="button" value="AJOUTER ROUGE" onclick="putjet('rouge')" /><input type="number" id="ip-rouge" /><br/>
+<input type="button" onclick="init()" value="RESET"/> <br/>
+<br/>
+<h3>Contenu du sac : </h3>
+<div id="sac"></div>
+<br/>
+ 
+<input type="button" onclick="piochePj()" value="PIOCHER HOMBRE"/>
+<input id="pnone" type="radio" name="isLuck" value="0" checked="checked" onchange="changeLuck(this.value)" /><label for="pnone">Normal</label>
+<input id="pluck" type="radio" name="isLuck" value="1" onchange="changeLuck(this.value)"/><label for="pluck">Chanceux</label>
+<input id="pvluck" type="radio" name="isLuck" value="2" onchange="changeLuck(this.value)"/><label for="pvluck">Très chanceux</label>
+<input id="pkeke" type="radio" name="isLuck" value="-1" onchange="changeLuck(this.value)"/><label for="pkeke">Joueur préféré</label>
+<br/>
+<input type="button" value="PIOCHE MARSHAL" onclick="piocheMarshal()" /><input type="number" id="ip-pioche" />
+
+<h3>Pioche: </h3>
+<div id="histo-pioche"></div> 
+
+<div id="legende">
+<h3>Les Jetons blancs</h3>
+<ol>
+S'utilisent: 
+<ul>
+<li>pour récupérer immédiatement et à tout moment d'un état Secoué (même après un jet de Vigueur raté)</li>
+<li>pour relancer un jet de Trait en gardant le meilleur résultat</li>
+</ul>
+</ol>
+
+<h3>Les Jetons rouges</h3>
+<ol>
+S'utilisent: 
+<ul>
+<li>pour lancer un d6 et d’ajouter son résultat à ton total (il peut comme d’habitude faire un As)</li>
+<li>pour annuler un échec critique</li>
+<li>comme les blancs</li>
+</ul>
+</ol>
+
+<h3>Les Jetons bleus</h3>
+<ol>
+S'utilisent:
+<ul> 
+<li>comme les rouges</li>
+</ul>
+</ol>
+
+<h3>Les Jetons légendaires</h3>
+<ol>
+Ils sont à usage unique et s'utilisent: 
+<ul>
+<li>comme un Jeton bleu, et ils ajoutent +2 au total final</li>
+<li>pour relancer n’importe quel jet – un jet de dégâts, un jet sur une table</li>
+<li>en fin de la partie, pour obtenir une Prime</li> 
+</ul>
+</ol>
+</div>
+
+</body>
+</html>
