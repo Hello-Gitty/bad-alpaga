@@ -39,6 +39,7 @@ function init() {
 	// CLEAR ALL
 	sacaj();
 	cleanHisto();
+	getEl(IDS.specials).innerHTML = "";
 	
 	var select = getEl(IDS.actor);
 	select.innerHTML = ""; 
