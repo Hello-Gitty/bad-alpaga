@@ -16,6 +16,11 @@ span[id=cartes] {
 	font-weight: bolder;
 }
 
+span[id=emmet] {
+	font-weight: bolder;
+/* 	color: DarkOrange !important; */ 
+}
+
 
 body {background-color: #b4764f;}
 

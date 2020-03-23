@@ -1,13 +1,13 @@
 // SELECTEURS
 var IDS = {instart:"ip-start", sac:"sac", histo:"histo-pioche", luck:"luck", inhombre:"ip-hombre", apioche:"ip-pioche", puthombre:"addHombre", hombres:"hombres", actor:"who"
-	, cardcounter:"cartes"};
+	, cardcounter:"cartes", specials:"emmet"};
 // CONSTANTES
 var JETONS = [{name:"blanc", nb:20, mod:0, style:"ivory"}, {name:"bleu", nb:5, mod:0, style:"darkblue"}, {name:"rouge", nb:10, mod:0, style:"darkred"}, {name:"legendaire", nb: 0, mod:0, style:"gold"}] ;
 var CARTES = {
-		couleurs:[{id:0, label:"Trêfle", style:"black"}, {id:1, label:"Carreau", style:"darkred"}, {id:2, label:"Pique", style:"black"}, {id:3, label:"Coeur", style:"darkred"}], 
-		valeurs: [{id:0, label:"Deux"}, {id:1, label:"Trois"}, {id:2, label:"Quatre"}, {id:3, label:"Cinq"}, {id:4, label:"Six"}, {id:5, label:"Sept"}, {id:6, label:"Huit"}, 
-		          {id:7, label:"Noeuf"}, {id:8, label:"Dix"}, {id:9, label:"Valet"}, {id:10, label:"Dame"}, {id:11, label:"Roi"}, {id:12, label:"As"}],
-		jokers: [{id:"JR", label:"Joker Rouge", style:"DarkMagenta"}, {id:"JN", label:"Joker Noir", style:"DarkSlateBlue"}]
+		couleurs:[{id:0, label:"Trêfle", style:"black", specials :[]}, {id:1, label:"Carreau", style:"darkred", specials :[]}, {id:2, label:"Pique", style:"black", specials : [10,11,12,13,14,15]}, {id:3, label:"Coeur", style:"darkred" , specials :[]}], 
+		valeurs: [{id:0, label:"Deux", value:2}, {id:1, label:"Trois", value:3}, {id:2, label:"Quatre", value:4}, {id:3, label:"Cinq", value:5}, {id:4, label:"Six", value:6}, {id:5, label:"Sept", value:7}, {id:6, label:"Huit", value:8}, 
+		          {id:7, label:"Noeuf", value:9}, {id:8, label:"Dix", value:10}, {id:9, label:"Valet", value:11}, {id:10, label:"Dame", value:12}, {id:11, label:"Roi", value:13}, {id:12, label:"As", value:14}],
+		jokers: [{id:"JR", label:"Joker Rouge", style:"DarkMagenta", value:15}, {id:"JN", label:"Joker Noir", style:"DarkSlateBlue", value:15}]
 		}
 var NB_JETON = 3;
 // VARIABLES
@@ -168,7 +168,7 @@ function printHombre(hombre) {
 	
 	addTextNode (dd, hombre.name +" ("+ hombre.nbjeton+ "): ")
 	for (var i = 0; i < hombre.reserve.length; i++) {
-		addJeton(dd, hombre.reserve[i], hombre);
+		addPiochable(dd, hombre.reserve[i], hombre);
 	}
 	// TODO BOUTON SUPPRESSION ??
 }
@@ -177,24 +177,35 @@ function restcard() {
 	tas = [];
 	// On construit le tas de CARTES
 	for (var i = 0; i < CARTES.jokers.length; i++) {
-		var cc = {id:"", name:""}
+		var cc = {id:"", name:"", value:0, special:false}
 		cc.id = CARTES.jokers[i].id;
 		cc.name = CARTES.jokers[i].label;
 		cc.style = CARTES.jokers[i].style;
+		cc.value = CARTES.jokers[i].value;
 		tas[tas.length] = cc;
 	} 
 	for (var i = 0; i < CARTES.couleurs.length; i++) {
 		var couleur = CARTES.couleurs[i];
 		for (var j = 0; j < CARTES.valeurs.length; j++) {
 			var val = CARTES.valeurs[j];
-			var cc = {id:"", name:"", style:""}
+			var cc = {id:"", name:"", style:"", value:0, special:false}
 			cc.id = "C"+couleur.id+"-"+val.id;
 			cc.name = val.label+" de "+couleur.label;
 			cc.style = couleur.style;
+			cc.value = val.value;
+			if (couleur.specials.length > 0) {
+				for (var k = 0; k < couleur.specials.length ; k++) {
+					if (cc.value == couleur.specials[k] ) {
+						cc.special = true;
+						break;
+					}
+				}
+			}
 			tas[tas.length] = cc;
 		}
 	}
 	majNbCard();
+	getEl(IDS.specials).innerHTML = "";
 	cleanHisto();
 }
 
@@ -305,14 +316,25 @@ function piocheHistorique(npi, actor, collection) {
 	}
 	var divhisto = getEl(IDS.histo);
 	if (divhisto.childNodes.length == 0) {
-		addNode(divhisto, "div");
+		addDivNode(divhisto);
 	}
 	var childhisto = divhisto.childNodes[0];
 	var span = addSpanNodeFirst(childhisto)
 	addTextNode(span, "Pioche "+ actor.name + " : " );
 	
+	var spanSpecial = getEl(IDS.specials);
+	if (spanSpecial.childNodes.length == 0) {
+		addSpanNode(spanSpecial);
+	}
+	var childspecial = spanSpecial.childNodes[0];
+	
+	
 	for (var ii=0; ii < picks.length; ii++) {
-		addJeton(span, picks[ii]);
+		addPiochable(span, picks[ii]);
+		if (picks[ii].special) {
+			addPiochable(childspecial, picks[ii]);
+		}
+		
 	}
 	addBrNode(span);
 	return picks;
@@ -355,11 +377,11 @@ function sacaj() {
 	}
 	var div = addNode(divsac, "div");
 	for (var i=0; i < sac.length; i++) {
-		addJeton(div, sac[i]);
+		addPiochable(div, sac[i]);
 	}
 }
 
-function addJeton(node, jeton, hombre) {
+function addPiochable(node, jeton, hombre) {
 	var p = addSpanNode(node);
 	p.style="color:"+jeton.style+";";
 	p.name=jeton.name;
