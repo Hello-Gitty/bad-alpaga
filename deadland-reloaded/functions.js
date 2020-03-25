@@ -30,6 +30,9 @@ function round(cc, nb) {
 	return Math.round(cc*nb)/nb;
 }
 
+
+
+
 /**
  * Fonction de base pour ajouter un noeud d'un type
  * 
@@ -77,7 +80,6 @@ function addButtonNode(NodeParent, id, valeur) {
 
 	return node;
 }
-
 
 
 function addImgNode(NodeParent, src) {

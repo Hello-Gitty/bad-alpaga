@@ -1,6 +1,6 @@
-// SELECTEURS
+// SELECTEURS ID DES INPUT
 var IDS = {instart:"ip-start", sac:"sac", histo:"histo-pioche", luck:"luck", inhombre:"ip-hombre", apioche:"ip-pioche", puthombre:"addHombre", hombres:"hombres", actor:"who"
-	, cardcounter:"cartes", specials:"emmet"};
+	, cardcounter:"cartes", specials:"emmet", zoneinit:"pregame"};
 // CONSTANTES
 var JETONS = [{name:"blanc", nb:20, mod:0, style:"ivory"}, {name:"bleu", nb:5, mod:0, style:"darkblue"}, {name:"rouge", nb:10, mod:0, style:"darkred"}, {name:"legendaire", nb: 0, mod:0, style:"gold"}] ;
 var CARTES = {
@@ -11,12 +11,16 @@ var CARTES = {
 		}
 var NB_JETON = 3;
 // VARIABLES
+// Sac de jeton
 var sac = []; // {name:"", style:""}
-var tas = []; //  {id:"", name:"", style:""}
+// tas de carte
+var tas = []; //  {id:"", name:"", style:"", special:boolean, valeur:int}
+// Personnages en jeu
 var personnages = []; // {div:node, id:0, name:"", nbjeton:"", reserve:[]};
-var nbPioche = null;
+// Statut de la partie
 var gameStarted = false;
-
+// Historique des pioches
+var histioche = [];
 
 
 /**
@@ -26,7 +30,9 @@ function init() {
 	sac = [];
 	tas = [];
 	personnages = [];
-
+	histioche = [];
+	
+	
 	// INIT VALUE INPUTS
 	for (var i = 0; i < JETONS.length; i++) {
 		var obj = JETONS[i];
@@ -41,11 +47,7 @@ function init() {
 	cleanHisto();
 	getEl(IDS.specials).innerHTML = "";
 	
-	var select = getEl(IDS.actor);
-	select.innerHTML = ""; 
-	
-	var dibHombres = getEl(IDS.hombres);
-	dibHombres.innerHTML = ""; 
+	cleanZoneHombres();
 	
 	var marshal =  {div:null, id:0, name:"Marshall", nbjeton: 0, reserve:[]};
 	personnages[personnages.length] = marshal;
@@ -53,7 +55,7 @@ function init() {
 	
 	gameStarted = false;
 	butttonStatus();
-
+	masqueZoneInit();
 	
 	getEl(IDS.inhombre).value = "";
 	getEl(IDS.luck).value = 0;
@@ -61,6 +63,17 @@ function init() {
 	getEl(IDS.apioche).value = 1;
 }
 
+function cleanZoneHombres() {
+	var select = getEl(IDS.actor);
+	select.innerHTML = ""; 
+	
+	var dibHombres = getEl(IDS.hombres);
+	dibHombres.innerHTML = ""; 
+}
+
+/**
+ * Active/desactive les boutons en fonction du statut de la partie.
+ */
 function butttonStatus() {
 	
 	var elements = document.querySelectorAll("input[type=button]");  
@@ -69,32 +82,59 @@ function butttonStatus() {
 	}
 	getEl(IDS.instart).disabled = gameStarted;
 	getEl(IDS.puthombre).disabled = gameStarted;
-	
 }
 
 
+/**
+ * Lancement de la partie
+ * Activation des boutons, tirages des jetons, etc
+ */
 function start() {
 	gameStarted = true;
-	// On construit le sac de jeton
-	for (var i = 0; i < JETONS.length; i++) {
-		var obj = JETONS[i];
-		var current = getValInt("ip-"+obj.name);
-		obj.mod = current;
-		for (var j = 0; j < obj.mod; j++) {
-			sac[sac.length] = {name:obj.name, style:obj.style}
+	// lecture du contexte de carte déjà jouée.
+	var contextGlobal = readObject64(getVal("context"));
+	// Si ya un sac dans le contexte on le charge
+	if (contextGlobal != null && contextGlobal.sac != undefined) {
+		sac = contextGlobal.sac;
+	} else {
+		// sinon On construit le sac de jeton
+		for (var i = 0; i < JETONS.length; i++) {
+			var obj = JETONS[i];
+			var current = getValInt("ip-"+obj.name);
+			obj.mod = current;
+			for (var j = 0; j < obj.mod; j++) {
+				sac[sac.length] = {name:obj.name, style:obj.style}
+			}
 		}
 	}
-	// INIT CARD
-	restcard();
+	// INIT CARD avec le contenu du contexte
+	var cardtext = [];
+	if (contextGlobal != null && contextGlobal.historique != undefined) {
+		cardtext = contextGlobal.historique;
+	}
+	restcard(cardtext);
+	
 	// MELANGE
 	shuffle(tas);
 	shuffle(sac);
-		
+	
+	// Si dans le contexte on avait des personnages
+	// on remplace ceux de la page
+	var tirage = true;
+	if (contextGlobal != null && contextGlobal.hombres != undefined) {
+		personnages = 	contextGlobal.hombres;
+		tirage = false;
+		cleanZoneHombres();
+	}
+
 	// Tirage des jetons de PJ
 	for (var i = 0; i<personnages.length; i++ ) {
 		var perso = personnages[i];
-		for (var j = 0 ; j < perso.nbjeton; j++) {
-			perso.reserve[perso.reserve.length] = pick(sac);
+		// On fait un tirage que si c'est des nouveaux personnages
+		if (tirage) {
+			for (var j = 0 ; j < perso.nbjeton; j++) {
+				perso.reserve[perso.reserve.length] = pick(sac);
+			}
 		}
 		printHombre(perso);
 	}
@@ -103,15 +143,56 @@ function start() {
 	sacaj();
 	// DESACTIVAGE BUTTON
 	butttonStatus();
+	// deaffichage init
+	masqueZoneInit();
 }
 
+function masqueZoneInit() {
+	var div = getEl(IDS.zoneinit);
+	if (gameStarted) {
+		div.style.display = "none";
+	} else {
+		div.style.display = "block";
+	}
+	
+}
+
+/**
+ * listener touche entrée sur élément du formulaire création d'hombre
+ */
 function enterHombre() {
     if(event.keyCode == 13) {
     	putHombre();
     }
 }
 
-// Ajout d'un personnage
+function getCartext() {
+	
+	var fullContexte = {historique: histioche, sac: sac , hombres : [] };
+	// on va recopier les personnages, sans la div de la page
+	// si on copiait juste le contenu et qu'on vidait la div
+	// comme on recopie la référence de l'objet on aurait supprimé la div
+	// dans notre page courante. Et on veut pas
+	for (var i = 0; i < personnages.length ; i ++) {
+		var cur = personnages[i];
+		var hh = {div:null, id:cur.id, name:cur.name, nbjeton:cur.nbjeton, reserve:cur.reserve};
+		fullContexte.hombres[fullContexte.hombres.length] = hh;
+	}
+	var datexport = objectTo64(fullContexte);
+	console.log(datexport);
+	var exporHidden = getEl("export");
+	exporHidden.style.display = "block";
+	exporHidden.value = datexport;
+	
+	exporHidden.select();
+	console.log(document.execCommand( 'copy' ));
+	alert("CODE copié dans le presse papier !");
+}
+
+/**
+ * Création d'un hombre
+ * Initialisation de l'objet à partir des valeurs de l'IHM
+ */
 function putHombre() {
 	if (gameStarted) {
 		return;
@@ -140,10 +221,14 @@ function putHombre() {
 	inputH.value = "";
 }
 
+/**
+ * Affichage d'un hombre
+ * Ecriture de la div, etc
+ */
 function printHombre(hombre) {
 	var container = hombre.div;
 	// Si c'est la première fois qu'on l'écrit ça doit être vide pour lui.
-	if (container == null) {
+	if (container == null || container == "") {
 		// Ajout "widget"
 		// selector d'action
 		var select = getEl(IDS.actor);
@@ -174,9 +259,19 @@ function printHombre(hombre) {
 	// TODO BOUTON SUPPRESSION ??
 }
 
-function restcard() {
+/**
+ * Function de démarrage d'un nouveau paquet
+ * Reconstruit un nouveau paquet
+ * @param contexte si le contexte est présent, on va retirer les cartes dont les id sont dans le contexte
+ */
+function restcard(cardtext) {
+	histioche = [];
 	tas = [];
+	getEl(IDS.specials).innerHTML = "";
+	cleanHisto();
+	
 	// On construit le tas de CARTES
+	// Ajout des jokers
 	for (var i = 0; i < CARTES.jokers.length; i++) {
 		var cc = {id:"", name:"", value:0, special:false}
 		cc.id = CARTES.jokers[i].id;
@@ -185,6 +280,7 @@ function restcard() {
 		cc.value = CARTES.jokers[i].value;
 		tas[tas.length] = cc;
 	} 
+	// Création dynamique des cartes 
 	for (var i = 0; i < CARTES.couleurs.length; i++) {
 		var couleur = CARTES.couleurs[i];
 		for (var j = 0; j < CARTES.valeurs.length; j++) {
@@ -205,17 +301,34 @@ function restcard() {
 			tas[tas.length] = cc;
 		}
 	}
+	// Si le contexte est défini 
+	// on retire les cartes du tas
+	// si c'est une carte spéciale on l'affiche
+	if (cardtext != undefined && cardtext.length > 0 ) {
+		for (var i = 0; i <cardtext.length; i++) {
+			var cardid = cardtext[i];
+			var pos = -1;
+			for (var j = 0; j < tas.length; j++ ) {
+				if (cardid == tas[j].id) {
+					pos = j;
+					break;
+				} 
+			}
+			if (pos != -1) {
+				var cc = tas.splice(pos, 1)[0];
+				histioche[histioche.length] = cc.id;
+				if (cc.special) {
+					printSpecial(cc);
+				}
+			}
+		}
+	}
+	// Mise a jour de l'affichae du nombre de carte
 	majNbCard();
-	getEl(IDS.specials).innerHTML = "";
-	cleanHisto();
 }
 
 function majNbCard() {
-	getEl(IDS.cardcounter).innerHTML = " "+tas.length;
-}
-
-function removeHombre(id) {
-	// TODO
+	getEl(IDS.cardcounter).innerHTML = " " + tas.length;
 }
 
 function removeJet(el, id) {
@@ -241,7 +354,10 @@ function removeJet(el, id) {
 	}
 	sacaj();
 } 
-
+/**
+ * Début des fonctions de pioche de jetons et cartes
+ * 
+ */
 
 function piocheUJ(idhombre) {
 	piochejet(1, idhombre);
@@ -285,11 +401,19 @@ function piocheCarte(nb,idHombre) {
 	majNbCard();
 }
 
+
 function piocheGC() {
 	var nb = getValInt(IDS.apioche);
 	var piocheur = getVal(IDS.actor);
 	piocheCarte(nb,piocheur);
 }
+
+/**
+ * Fin des fonctions de pioche de jetons et cartes
+ * 
+ */
+
+
 
 /**
  * Pioche de jeton
@@ -308,7 +432,7 @@ function pioche(npi, actor, collection) {
 }
 
 /**
- * Pioche de jeton
+ * Pioche avec affichage dans l'historique
  */
 function piocheHistorique(npi, actor, collection) {
 	var picks = pioche (npi, actor, collection);
@@ -323,22 +447,28 @@ function piocheHistorique(npi, actor, collection) {
 	var span = addSpanNodeFirst(childhisto)
 	addTextNode(span, "Pioche "+ actor.name + " : " );
 	
-	var spanSpecial = getEl(IDS.specials);
-	if (spanSpecial.childNodes.length == 0) {
-		addSpanNode(spanSpecial);
-	}
-	var childspecial = spanSpecial.childNodes[0];
-	
-	
 	for (var ii=0; ii < picks.length; ii++) {
+		histioche[histioche.length] = picks[ii].id;
 		addPiochable(span, picks[ii]);
 		if (picks[ii].special) {
-			addPiochable(childspecial, picks[ii]);
+			printSpecial(picks[ii]);
 		}
 		
 	}
 	addBrNode(span);
 	return picks;
+}
+/**
+ * Affichage d'une carte spéciale dans la zone
+ * @param carte
+ */
+function printSpecial(carte) {
+	var spanSpecial = getEl(IDS.specials);
+	if (spanSpecial.childNodes.length == 0) {
+		addSpanNode(spanSpecial);
+	}
+	var childspecial = spanSpecial.childNodes[0];
+	addPiochable(childspecial, carte);
 }
 
 
@@ -361,6 +491,9 @@ function putjet(type) {
 	sacaj();
 }
 
+/**
+ * Nettoyage de l'AFFICHAGE de l'historique des cartes
+ */
 function cleanHisto() {
 	var divhisto = getEl(IDS.histo);
 	if (divhisto.childNodes.length > 0) {
@@ -386,12 +519,13 @@ function addPiochable(node, jeton, hombre) {
 	var p = addSpanNode(node);
 	p.style="color:"+jeton.style+";";
 	p.name=jeton.name;
-	addTextNode(p, jeton.name +" ");
+	addTextNode(p, "¤ "+ jeton.name +" ");
 	if (hombre != undefined) {
 		p.setAttribute("onclick","removeJet(this,"+hombre.id+")");
 	}
 } 
 
+// TODO Faire fonction ajout du style d'un span (pour faire des affiaches en fonction de la zone. 
 
 /**
  * pick un jeton du sac
@@ -421,4 +555,22 @@ function searchbyid(list, id) {
 		}
 	}
 	return null;
+}
+
+function objectTo64(array) {
+	return btoa(JSON.stringify(array));
+} 
+
+
+function readObject64 (array64) {
+	var result = null;
+	if (array64.length > 0) {
+		try {
+			result = JSON.parse(atob(array64))
+		} catch(error) {
+			alert("Code partie erroné");
+			console.log(error);
+		}
+	}
+	return result;
 }

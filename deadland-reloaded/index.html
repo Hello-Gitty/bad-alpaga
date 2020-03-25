@@ -9,45 +9,54 @@
 </head>
 <body onload="init()">
 	<h2>LE PIOCHEUR DE LA MORT RELOADED</h2>
-
-	<h3>Initialisation :</h3>
-	<!--  <input type="button" value="AJOUTER LEGENDAIRE" onclick="putjet('legendaire')" /> -->
-	<label for="ip-legendaire">Jetons Legendaire :</label>
-	<input type="number" id="ip-legendaire" min="0" />
+	<div id="pregame">
+		<h3>Initialisation :</h3>
+		<!--  <input type="button" value="AJOUTER LEGENDAIRE" onclick="putjet('legendaire')" /> -->
+		<label for="ip-legendaire">Jetons Legendaire :</label>
+		<input type="number" id="ip-legendaire" min="0" />
+		<br />
+		<!-- 	<input type="button" value="AJOUTER BLANC" onclick="putjet('blanc')" /> -->
+		<label for="ip-blanc">Jetons Blanc :</label>
+		<input type="number" id="ip-blanc" min="0" />
+		<br />
+		<!--  <input type="button" value="AJOUTER BLEU" onclick="putjet('bleu')" /> -->
+		<label for="ip-bleu">Jetons Bleu :</label>
+		<input type="number" id="ip-bleu" min="0" />
+		<br />
+		<!--  <input type="button" value="AJOUTER ROUGE" onclick="putjet('rouge')" /> -->
+		<label for="ip-rouge">Jetons Rouge :</label>
+		<input type="number" id="ip-rouge" min="0" />
+		<br />
+		<br />
+		<label for="context">Import CODE PARTIE (un code de partie effacera les hombres actuellement créés) :</label>
+		<input id="context" />
+			
+		<br />
+		
+	
+		<br /> Hombre :
+		<input id="ip-hombre" onkeydown="enterHombre()" />
+		<select name="chance" id="luck" onkeydown="enterHombre()">
+			<option value="-2">malchanceux + mauvais rêve</option>
+			<option value="-1">malchanceux / mauvais rêve</option>
+			<option value="0" selected>Normal</option>
+			<option value="1">Chanceux</option>
+			<option value="2">Très chanceux</option>
+			<!-- <option value="-99">Joueur Préféré (kéké)</option> -->
+		</select>
+		<input id="addHombre" type="button" value="AJOUTER" onclick="putHombre()" />
+		<br />
+	</div>
+	
+	<input type="text" id="export" style="display:none" />
 	<br />
-	<!-- 	<input type="button" value="AJOUTER BLANC" onclick="putjet('blanc')" /> -->
-	<label for="ip-blanc">Jetons Blanc :</label>
-	<input type="number" id="ip-blanc" min="0" />
-	<br />
-	<!--  <input type="button" value="AJOUTER BLEU" onclick="putjet('bleu')" /> -->
-	<label for="ip-bleu">Jetons Bleu :</label>
-	<input type="number" id="ip-bleu" min="0" />
-	<br />
-	<!--  <input type="button" value="AJOUTER ROUGE" onclick="putjet('rouge')" /> -->
-	<label for="ip-rouge">Jetons Rouge :</label>
-	<input type="number" id="ip-rouge" min="0" />
-	<br />
-
-	<br /> Hombre :
-	<input id="ip-hombre" onkeydown="enterHombre()" />
-	<select name="chance" id="luck" onkeydown="enterHombre()">
-		<option value="-2">malchanceux + mauvais rêve</option>
-		<option value="-1">malchanceux / mauvais rêve</option>
-		<option value="0" selected>Normal</option>
-		<option value="1">Chanceux</option>
-		<option value="2">Très chanceux</option>
-		<!-- <option value="-99">Joueur Préféré (kéké)</option> -->
-	</select>
-	<input id="addHombre" type="button" value="AJOUTER" onclick="putHombre()" />
-	<br />
-
-	<br />
-
+	<h3>Controle :</h3>
 	<input id="ip-start" type="button" value="DEBUTER PARTIE" onclick="start()" />
 	<input type="button" onclick="init()" value="RESET" />
+	<input type="button" onclick="getCartext()" value="EXPORT CODE PARTIE" />
 	<br />
 
-	<h3>Sac et Pioche</h3>
+	<h3>Sac et Pioche :</h3>
 	<div id="sac"></div>
 	<br />
 
