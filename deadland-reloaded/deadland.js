@@ -1,6 +1,6 @@
 // SELECTEURS ID DES INPUT
 var IDS = {instart:"ip-start", sac:"sac", histo:"histo-pioche", luck:"luck", inhombre:"ip-hombre", apioche:"ip-pioche", puthombre:"addHombre", hombres:"hombres", actor:"who"
-	, cardcounter:"cartes", specials:"emmet", zoneinit:"pregame"};
+	, cardcounter:"cartes", specials:"emmet", zoneinit:"pregame", exportCode:"export"};
 // CONSTANTES
 var JETONS = [{name:"blanc", nb:20, mod:0, style:"ivory"}, {name:"bleu", nb:5, mod:0, style:"darkblue"}, {name:"rouge", nb:10, mod:0, style:"darkred"}, {name:"legendaire", nb: 0, mod:0, style:"gold"}] ;
 var CARTES = {
@@ -145,6 +145,8 @@ function start() {
 	butttonStatus();
 	// deaffichage init
 	masqueZoneInit();
+	
+	getEl(IDS.exportCode).value = "";
 }
 
 function masqueZoneInit() {
@@ -179,11 +181,10 @@ function getCartext() {
 		fullContexte.hombres[fullContexte.hombres.length] = hh;
 	}
 	var datexport = objectTo64(fullContexte);
-	console.log(datexport);
-	var exporHidden = getEl("export");
-	exporHidden.style.display = "block";
+	//console.log(datexport);
+	// On va copier le code dans la zone de texte prévue
+	var exporHidden = getEl(IDS.exportCode);
 	exporHidden.value = datexport;
-	
 	exporHidden.select();
 	console.log(document.execCommand( 'copy' ));
 	alert("CODE copié dans le presse papier !");
@@ -256,7 +257,6 @@ function printHombre(hombre) {
 	for (var i = 0; i < hombre.reserve.length; i++) {
 		addPiochable(dd, hombre.reserve[i], hombre);
 	}
-	// TODO BOUTON SUPPRESSION ??
 }
 
 /**
@@ -468,7 +468,7 @@ function printSpecial(carte) {
 		addSpanNode(spanSpecial);
 	}
 	var childspecial = spanSpecial.childNodes[0];
-	addPiochable(childspecial, carte);
+	addSpeciale(childspecial, carte);
 }
 
 
@@ -517,13 +517,26 @@ function sacaj() {
 
 function addPiochable(node, jeton, hombre) {
 	var p = addSpanNode(node);
-	p.style="color:"+jeton.style+";";
-	p.name=jeton.name;
-	addTextNode(p, "¤ "+ jeton.name +" ");
+	applyStyle(p,jeton);
+	addTextNode(p, jeton.name +" ");
 	if (hombre != undefined) {
 		p.setAttribute("onclick","removeJet(this,"+hombre.id+")");
 	}
 } 
+
+function addSpeciale(node, obj) {
+	var p = addSpanNode(node);
+	applyStyle(p,obj);
+	addTextNode(p, "¤ "+ obj.name +" ");
+} 
+
+
+function applyStyle(node, obj) {
+	node.style="color:"+obj.style+";";
+	node.name=obj.name;
+	return node;
+}
+
 
 // TODO Faire fonction ajout du style d'un span (pour faire des affiaches en fonction de la zone. 
 

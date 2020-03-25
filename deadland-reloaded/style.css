@@ -28,3 +28,13 @@ ul {
 	
 	
 }
+
+/* Firefox utilise un préfixe */
+input[type="text"]:-moz-read-only {
+  background-color: #ccc;
+}
+
+/* Blink/WebKit/Edge n'ont pas de préfixe */
+input[type="text"]:read-only {
+  background-color: #ccc;
+}
