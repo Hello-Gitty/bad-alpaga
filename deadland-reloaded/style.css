@@ -1,15 +1,70 @@
+@font-face {
+	font-family: "Carnevalee Freakshow";
+	src: url('static/Carnevalee-Freakshow.ttf');
+}
+
+body {
+	background: radial-gradient(#186F05,#0E4502);
+    font-family: "Carnevalee Freakshow";
+    margin: 20px;
+    border: 1px solid yellow;
+    border-radius: 12px;
+    padding: 10px;
+	font-size: 20px;
+}
+
+input {
+	font-family:"Carnevalee Freakshow";
+	font-size:18px;
+}
+
 input[type="number"] {
 	width: 40px;
 	text-align: right;
+	border-radius: 12px;
+    border: 0;
 }
 
 input[type="text"]:disabled {
 	background: #dddddd;
 }
 
-div[id=sac], div[id=histo-pioche], div[id=hombres] {
-	border: 1px solid;
+/* Firefox utilise un préfixe */
+input[type="text"]:-moz-read-only {
+	background-color: #ccc;
+}
+
+/* Blink/WebKit/Edge n'ont pas de préfixe */
+input[type="text"]:read-only {
+	background-color: #ccc;
+}
+
+input[type="text"] {
+	border-radius: 12px;
+    border: 0;
+	padding-left: 5px;
+}
+
+input[type="button"] {
+	border-radius: 12px 0 12px 0;
+}
+
+select {
+	height: 22px;
+	border-radius: 12px;
+	font-size:18px;
+	border: 0;
+	font-family: "Carnevalee Freakshow";
+}
+
+div[id=sac], div[id=histo-pioche], div[id=hombres], div[id=pioche], #emmet, #action, #start, #stop, #init {
+	border-left: 1px solid yellow;
 	font-weight: bolder;
+	border-radius: 0 12px;
+}
+
+#action, #start, #stop, #init {
+	padding: 5px;
 }
 
 span[id=cartes] {
@@ -21,20 +76,119 @@ span[id=emmet] {
 /* 	color: DarkOrange !important; */ 
 }
 
-
-body {background-color: #b4764f;}
-
-ul {
-	
-	
+h2 {
+	margin-top: 0;
+	border-bottom: 1px solid yellow;
+	padding-bottom : 5px;
+	text-align: center;
 }
 
-/* Firefox utilise un préfixe */
-input[type="text"]:-moz-read-only {
-  background-color: #ccc;
+h3 {
+	margin-bottom : 0px;
 }
 
-/* Blink/WebKit/Edge n'ont pas de préfixe */
-input[type="text"]:read-only {
-  background-color: #ccc;
+h4 {
+	margin : 0;
+}
+
+a {
+	font-size : 12px;
+	color : darkgray;
+	cursor : pointer;
+	text-decoration : underline;
+}
+
+img.jeton {
+	width: 60px;
+	margin : 1px;
+}
+
+img.carte {
+	width: 88px;
+	margin : 1px;
+}
+
+#sac {
+	height: 62px;
+	padding : 5px;
+}
+
+#pioche {
+	width: 485px;
+}
+
+#pioche, #emmet {
+	height: 126px;
+	padding : 5px;
+	border-radius: 0 12px;
+}
+
+#cartes, #joueur {
+	float: left;
+}
+
+#jetons, #historique {
+	float: right;
+	margin-left: 5px;
+}
+
+#partie, #tirage {
+	display: table;
+}
+
+#histo-pioche {
+	display: inline-block;
+    width: 760px;
+	height: 1100px;
+	padding-left: 5px;
+}
+
+#pregame li {
+	margin: 0 0 1px 0;
+}
+
+.hombre {
+	height: 70px;
+    padding: 5px;
+    width: 485px;
+}	
+
+.name {
+	text-align: center;
+	padding-top: 5px;
+	padding-right: 5px;
+}
+
+.name.button {
+	float: left;
+}
+
+.tirage {
+	text-align: center;
+	float:left;
+	border-bottom: 1px solid yellow;
+	margin-right: 5px;
+	border-radius: 12px;
+}
+
+.jetons {
+	height: 72px;
+    overflow: overlay;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #0E4502;
+  border-radius: 10px;
 }

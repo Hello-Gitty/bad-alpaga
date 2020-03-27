@@ -2,7 +2,7 @@
 var IDS = {instart:"ip-start", sac:"sac", histo:"histo-pioche", luck:"luck", inhombre:"ip-hombre", apioche:"ip-pioche", puthombre:"addHombre", hombres:"hombres", actor:"who"
 	, cardcounter:"cartes", specials:"emmet", zoneinit:"pregame", exportCode:"export"};
 // CONSTANTES
-var JETONS = [{name:"blanc", nb:20, mod:0, style:"ivory"}, {name:"bleu", nb:5, mod:0, style:"darkblue"}, {name:"rouge", nb:10, mod:0, style:"darkred"}, {name:"legendaire", nb: 0, mod:0, style:"gold"}] ;
+var JETONS = [{id:"J0", name:"blanc", nb:20, mod:0, style:"ivory"}, {id:"J1", name:"rouge", nb:10, mod:0, style:"darkred"}, {id:"J2", name:"bleu", nb:5, mod:0, style:"darkblue"}, {id:"J3", name:"legendaire", nb: 0, mod:0, style:"gold"}] ;
 var CARTES = {
 		couleurs:[{id:0, label:"Trêfle", style:"black", specials :[]}, {id:1, label:"Carreau", style:"darkred", specials :[]}, {id:2, label:"Pique", style:"black", specials : [10,11,12,13,14,15]}, {id:3, label:"Coeur", style:"darkred" , specials :[]}], 
 		valeurs: [{id:0, label:"Deux", value:2}, {id:1, label:"Trois", value:3}, {id:2, label:"Quatre", value:4}, {id:3, label:"Cinq", value:5}, {id:4, label:"Six", value:6}, {id:5, label:"Sept", value:7}, {id:6, label:"Huit", value:8}, 
@@ -103,7 +103,7 @@ function start() {
 			var current = getValInt("ip-"+obj.name);
 			obj.mod = current;
 			for (var j = 0; j < obj.mod; j++) {
-				sac[sac.length] = {name:obj.name, style:obj.style}
+				sac[sac.length] = {id:obj.id, name:obj.name, style:obj.style}
 			}
 		}
 	}
@@ -150,11 +150,18 @@ function start() {
 }
 
 function masqueZoneInit() {
-	var div = getEl(IDS.zoneinit);
 	if (gameStarted) {
-		div.style.display = "none";
+		getEl(IDS.zoneinit).style.display = "none";
+		getEl("tirage").style.display = "table";
+		getEl("start").style.display = "none";
+		getEl("stop").style.display = "block";
+		getEl("historique").style.display = "block";
 	} else {
-		div.style.display = "block";
+		getEl(IDS.zoneinit).style.display = "block";
+		getEl("tirage").style.display = "none";
+		getEl("start").style.display = "block";
+		getEl("stop").style.display = "none";
+		getEl("historique").style.display = "none";
 	}
 	
 }
@@ -245,17 +252,30 @@ function printHombre(hombre) {
 		}
 	}
 	var dd = addDivNode(container);
-	var buttonJeton = addButtonNode(dd, "", "JETON");
+	dd.classList.add("hombre");
+	
+	var divH = addDivNode(dd);
+	divH.classList.add("name");
+	
+	divN = addDivNode(divH);
+	divN.style = "margin-bottom: 5px";
+	addTextNode(divN, hombre.name)
+	
+	var divB = addDivNode(divH);
+	divH.classList.add("button");
+	var buttonJeton = addButtonNode(divB, "", "Jeton");
 	buttonJeton.disabled = !gameStarted;
 	buttonJeton.setAttribute("onclick","piocheUJ("+hombre.id+")");
 	
-	var buttonCarte = addButtonNode(dd, "", "CARTE");
+	var buttonCarte = addButtonNode(divB, "", "Carte");
 	buttonCarte.disabled = !gameStarted;
+	buttonCarte.style="margin-left: 2px;"
 	buttonCarte.setAttribute("onclick","piocheUC("+hombre.id+")");
-	
-	addTextNode (dd, hombre.name +" ("+ hombre.nbjeton+ "): ")
+
+	var divJ = addDivNode(dd);
+	divJ.classList.add("jetons");
 	for (var i = 0; i < hombre.reserve.length; i++) {
-		addPiochable(dd, hombre.reserve[i], hombre);
+		addPiochable(divJ, hombre.reserve[i], "jeton", hombre);
 	}
 }
 
@@ -328,11 +348,17 @@ function restcard(cardtext) {
 }
 
 function majNbCard() {
-	getEl(IDS.cardcounter).innerHTML = " " + tas.length;
+	//getEl(IDS.cardcounter).innerHTML = " " + tas.length;
+	var node = getEl("pioche");
+	node.innerHTML = "";
+	for (var i=0; i < tas.length; i++) {
+		var p = addImgNode(node, {id:"CD"}, "carte");
+		p.style = "position:absolute; margin-left:" + 5*i + "px;";
+	}
 }
 
 function removeJet(el, id) {
-	var name = el.name;
+	var name = el.alt;
 	el.remove();
 	var notej = search(JETONS, name);
 	var hombre = searchbyid(personnages, id);
@@ -350,7 +376,7 @@ function removeJet(el, id) {
 		}
 	}
 	if (notej != null) {
-		sac[sac.length] = {name:notej.name, style:notej.style};	
+		sac[sac.length] = {id:notej.id, name:notej.name, style:notej.style};	
 	}
 	sacaj();
 } 
@@ -444,18 +470,19 @@ function piocheHistorique(npi, actor, collection) {
 		addDivNode(divhisto);
 	}
 	var childhisto = divhisto.childNodes[0];
-	var span = addSpanNodeFirst(childhisto)
-	addTextNode(span, "Pioche "+ actor.name + " : " );
-	
+	var div = addDivNodeFirst(childhisto)
+	div.classList.add("tirage");
+	addTextNode(div, actor.name);
+	addBrNode(div);
 	for (var ii=0; ii < picks.length; ii++) {
 		histioche[histioche.length] = picks[ii].id;
-		addPiochable(span, picks[ii]);
+		addPiochable(div, picks[ii], "carte");
 		if (picks[ii].special) {
 			printSpecial(picks[ii]);
 		}
 		
 	}
-	addBrNode(span);
+	
 	return picks;
 }
 /**
@@ -464,11 +491,7 @@ function piocheHistorique(npi, actor, collection) {
  */
 function printSpecial(carte) {
 	var spanSpecial = getEl(IDS.specials);
-	if (spanSpecial.childNodes.length == 0) {
-		addSpanNode(spanSpecial);
-	}
-	var childspecial = spanSpecial.childNodes[0];
-	addSpeciale(childspecial, carte);
+	var p = addImgNode(spanSpecial, carte, "carte");
 }
 
 
@@ -511,23 +534,21 @@ function sacaj() {
 	}
 	var div = addNode(divsac, "div");
 	for (var i=0; i < sac.length; i++) {
-		addPiochable(div, sac[i]);
+		item = addPiochable(div, sac[i], "jeton");
+		item.style = "position:absolute; margin-left:" + 12*i + "px;";
 	}
 }
 
-function addPiochable(node, jeton, hombre) {
-	var p = addSpanNode(node);
-	applyStyle(p,jeton);
-	addTextNode(p, jeton.name +" ");
+function addPiochable(node, jeton, classe, hombre) {
+	var p = addImgNode(node, jeton, classe);
 	if (hombre != undefined) {
-		p.setAttribute("onclick","removeJet(this,"+hombre.id+")");
+		p.setAttribute("onclick", "removeJet(this,"+hombre.id+")");
 	}
+	return p;
 } 
 
 function addSpeciale(node, obj) {
-	var p = addSpanNode(node);
-	applyStyle(p,obj);
-	addTextNode(p, "¤ "+ obj.name +" ");
+	var p = addImgNode(node, obj, "carte");
 } 
 
 
