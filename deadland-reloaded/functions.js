@@ -30,9 +30,6 @@ function round(cc, nb) {
 	return Math.round(cc*nb)/nb;
 }
 
-
-
-
 /**
  * Fonction de base pour ajouter un noeud d'un type
  * 
@@ -74,19 +71,9 @@ function addInputNode(NodeParent, id, valeur, readO) {
 
 function addButtonNode(NodeParent, id, valeur) {
 	var node = addNode(NodeParent, "input");
-	node.type = 'button';
-	node.id = id;
+	node.type = "button";
 	node.value = valeur;
-
-	return node;
-}
-
-
-function addImgNode(NodeParent, src) {
-	var node = addNode(NodeParent, "img");
-	node.src = src;
-	node.width = 32;
-	node.height = 32;
+	node.id = id;
 	return node;
 }
 
@@ -109,6 +96,13 @@ function addSpanNode(NodeParent) {
 	return addNode(NodeParent, "span");
 }
 
+function addImgNode(NodeParent, item, classe) {
+	var img = addNode(NodeParent, "img");
+	img.classList.add(classe);
+	img.src = "static/" + item.id + ".png";
+	img.alt = item.name;
+	return img;
+}
 
 function addTableNode(NodeParent) {
 	var node = addNode(NodeParent, "table");
@@ -134,8 +128,8 @@ function addTextNode(NodeParent, text) {
 	NodeParent.appendChild(node);
 }
 
-function addSpanNodeFirst(NodeParent, text) {
-	var node = document.createElement("span");
+function addDivNodeFirst(NodeParent, text) {
+	var node = document.createElement("div");
 	if (NodeParent.childNodes.length > 0) {
 		NodeParent.insertBefore(node,NodeParent.childNodes[0]);
 	} else {
