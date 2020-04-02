@@ -71,6 +71,14 @@ function cleanZoneHombres() {
 	dibHombres.innerHTML = ""; 
 }
 
+
+function initiative() {
+	for (var i = 0; i <personnages.length; i++) {
+		piocheUnitCarte(personnages[i].id);
+	}
+}
+
+
 /**
  * Active/desactive les boutons en fonction du statut de la partie.
  */
@@ -175,6 +183,13 @@ function enterHombre() {
     }
 }
 
+function enterSave() {
+    if(event.keyCode == 13) {
+    	start();
+    }
+}
+
+
 function getCartext() {
 	
 	var fullContexte = {historique: histioche, sac: sac , hombres : [] };
@@ -257,7 +272,7 @@ function printHombre(hombre) {
 	var divH = addDivNode(dd);
 	divH.classList.add("name");
 	
-	divN = addDivNode(divH);
+	var divN = addDivNode(divH);
 	divN.style = "margin-bottom: 5px";
 	addTextNode(divN, hombre.name)
 	
@@ -265,12 +280,12 @@ function printHombre(hombre) {
 	divH.classList.add("button");
 	var buttonJeton = addButtonNode(divB, "", "Jeton");
 	buttonJeton.disabled = !gameStarted;
-	buttonJeton.setAttribute("onclick","piocheUJ("+hombre.id+")");
+	buttonJeton.setAttribute("onclick","piocheUnitJeton("+hombre.id+")");
 	
 	var buttonCarte = addButtonNode(divB, "", "Carte");
 	buttonCarte.disabled = !gameStarted;
 	buttonCarte.style="margin-left: 2px;"
-	buttonCarte.setAttribute("onclick","piocheUC("+hombre.id+")");
+	buttonCarte.setAttribute("onclick","piocheUnitCarte("+hombre.id+")");
 
 	var divJ = addDivNode(dd);
 	divJ.classList.add("jetons");
@@ -385,11 +400,11 @@ function removeJet(el, id) {
  * 
  */
 
-function piocheUJ(idhombre) {
-	piochejet(1, idhombre);
+function piocheUnitJeton(idhombre) {
+	piocheJeton(1, idhombre);
 }
 
-function piochejet(nb, idhombre) {
+function piocheJeton(nb, idhombre) {
 	var actor = searchbyid(personnages, idhombre);
 	var hombre = true;
 	if (actor == null) {
@@ -406,14 +421,14 @@ function piochejet(nb, idhombre) {
 }
 
 
-function piocheGJ() {
+function actionPiocheJeton() {
 	var nb = getValInt(IDS.apioche);
 	var piocheur = getVal(IDS.actor);
-	piochejet(nb, piocheur);
+	piocheJeton(nb, piocheur);
 }
 
 
-function piocheUC(idHombre) {
+function piocheUnitCarte(idHombre) {
 	piocheCarte(1,idHombre);
 }
 
@@ -428,7 +443,7 @@ function piocheCarte(nb,idHombre) {
 }
 
 
-function piocheGC() {
+function actionPiocheCarte() {
 	var nb = getValInt(IDS.apioche);
 	var piocheur = getVal(IDS.actor);
 	piocheCarte(nb,piocheur);
@@ -534,7 +549,7 @@ function sacaj() {
 	}
 	var div = addNode(divsac, "div");
 	for (var i=0; i < sac.length; i++) {
-		item = addPiochable(div, sac[i], "jeton");
+		var item = addPiochable(div, sac[i], "jeton");
 		item.style = "position:absolute; margin-left:" + 12*i + "px;";
 	}
 }

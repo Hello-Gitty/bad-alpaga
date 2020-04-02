@@ -3,6 +3,10 @@
 	src: url('static/Carnevalee-Freakshow.ttf');
 }
 
+/** 	background-color: #155806;
+	background: radial-gradient(#2e9119,#155806);
+	*/
+
 body {
 	background: radial-gradient(#186F05,#0E4502);
     font-family: "Carnevalee Freakshow";

@@ -45,7 +45,7 @@
 
 	<h3>Controle</h3>
 	<div id="start">
-		<label for="context">Import Sauvegarde </label><input type="text" id="context" />
+		<label for="context">Import Sauvegarde </label><input type="text" id="context" onkeydown="enterSave()" />
 		<input id="ip-start" type="button" value="Debuter Partie" onclick="start()" />
 	</div>
 	<div id="stop">
@@ -81,8 +81,9 @@
 			<div id="action">
 				<select name="who" id="who"></select>
 				<input type="number" id="ip-pioche" min="1" value=1/>
-				<input type="button" id="piochetej" onclick="piocheGJ()" value="Piocher Jeton" />
-				<input type="button" id="piochetrac" onclick="piocheGC()" value="Piocher Carte" />
+				<input type="button" id="piochetej" onclick="actionPiocheJeton()" value="Piocher Jeton" />
+				<input type="button" id="piochetrac" onclick="actionPiocheCarte()" value="Piocher Carte" />
+				<input type="button" id="bagare" onclick="initiative()" value="Initiative" />
 			</div>
 		</div>
 	</div>
