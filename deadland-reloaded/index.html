@@ -27,41 +27,51 @@
 					: <input type="number" id="ip-legendaire" min="0" /><br>
 				</div>
 			</div>
-			<div>
+			<div id="init_hombre">
 				<h4>Hombre</h4>
-				<input id="ip-hombre" type="text" onkeydown="enterHombre()" />
-				<select name="couleur" id="couleur" onkeydown="enterHombre()">
-					<option value="C0">Trefle</option>
-					<option value="C1">Carreau</option>
-					<option value="C2">Pique</option>
-					<option value="C3">Coeur</option>
-					<option value="CJR">Joker Rouge</option>
-					<option value="CJN">Joker Noir</option>
-				</select>
-				<select name="valeur" id="valeur" onkeydown="enterHombre()">
-					<option value="0">2</option>
-					<option value="1">3</option>
-					<option value="2">4</option>
-					<option value="3">5</option>
-					<option value="4">6</option>
-					<option value="5">7</option>
-					<option value="6">8</option>
-					<option value="7">9</option>
-					<option value="8">10</option>
-					<option value="9">Valet</option>
-					<option value="10">Dame</option>
-					<option value="11">Roi</option>
-					<option value="12">As</option>
-					<!-- <option value="-99">Joueur Préféré (kéké)</option> -->
-				</select>
-				<select name="chance" id="luck" onkeydown="enterHombre()">
-					<option value="-2">malchanceux + mauvais reve</option>
-					<option value="-1">malchanceux / mauvais reve</option>
-					<option value="0" selected>Normal</option>
-					<option value="1">Chanceux</option>
-					<option value="2">Tres chanceux</option>
-					<!-- <option value="-99">Joueur Préféré (kéké)</option> -->
-				</select>
+				<div>
+					Nom<br>
+					<input id="ip-hombre" type="text" onkeydown="enterHombre()" />
+				</div>	
+				<div>
+					Atout<br>
+					<select name="couleur" id="couleur" onkeydown="enterHombre()" onchange="selectAtout(this)">
+						<option value="C0">Trefle</option>
+						<option value="C1">Carreau</option>
+						<option value="C2">Pique</option>
+						<option value="C3">Coeur</option>
+						<option value="CJR">Joker Rouge</option>
+						<option value="CJN">Joker Noir</option>
+					</select>				
+					<select name="valeur" id="valeur" onkeydown="enterHombre()">
+						<option value="0">2</option>
+						<option value="1">3</option>
+						<option value="2">4</option>
+						<option value="3">5</option>
+						<option value="4">6</option>
+						<option value="5">7</option>
+						<option value="6">8</option>
+						<option value="7">9</option>
+						<option value="8">10</option>
+						<option value="9">Valet</option>
+						<option value="10">Dame</option>
+						<option value="11">Roi</option>
+						<option value="12">As</option>
+						<!-- <option value="-99">Joueur Préféré (kéké)</option> -->
+					</select>
+				</div>	
+				<div>
+					Jetons<br>
+					<select name="chance" id="luck" onkeydown="enterHombre()">
+						<option value="-2">malchanceux + mauvais reve</option>
+						<option value="-1">malchanceux / mauvais reve</option>
+						<option value="0" selected>Normal</option>
+						<option value="1">Chanceux</option>
+						<option value="2">Tres chanceux</option>
+						<!-- <option value="-99">Joueur Préféré (kéké)</option> -->
+					</select>
+				</div>
+				<br>
 				<input type="button" id="addHombre" onclick="putHombre()" value="Ajouter" />
 			</div>
 		</div>

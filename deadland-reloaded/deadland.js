@@ -79,6 +79,13 @@ function initiative() {
 	}
 }
 
+function selectAtout(select){
+	if(select.value == "CJR" || select.value == "CJN"){
+		getEl("valeur").disabled = true;
+	} else {
+		getEl("valeur").disabled = false;
+	}
+}
 
 /**
  * Active/desactive les boutons en fonction du statut de la partie.
