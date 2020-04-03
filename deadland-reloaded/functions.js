@@ -99,8 +99,7 @@ function addSpanNode(NodeParent) {
 function addImgNode(NodeParent, item, classe) {
 	var img = addNode(NodeParent, "img");
 	img.classList.add(classe);
-	img.src = "static/" + item.id + ".png";
-	img.alt = item.name;
+	img.src = "static/" + item + ".png";
 	return img;
 }
 
@@ -153,6 +152,3 @@ function shuffle(a) {
 function random(min, max) {
 	 return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-
-

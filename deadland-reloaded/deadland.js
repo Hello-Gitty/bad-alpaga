@@ -4,10 +4,11 @@ var IDS = {instart:"ip-start", sac:"sac", histo:"histo-pioche", luck:"luck", inh
 // CONSTANTES
 var JETONS = [{id:"J0", name:"blanc", nb:20, mod:0, style:"ivory"}, {id:"J1", name:"rouge", nb:10, mod:0, style:"darkred"}, {id:"J2", name:"bleu", nb:5, mod:0, style:"darkblue"}, {id:"J3", name:"legendaire", nb: 0, mod:0, style:"gold"}] ;
 var CARTES = {
-		couleurs:[{id:0, label:"Trêfle", style:"black", specials :[]}, {id:1, label:"Carreau", style:"darkred", specials :[]}, {id:2, label:"Pique", style:"black", specials : [10,11,12,13,14,15]}, {id:3, label:"Coeur", style:"darkred" , specials :[]}], 
-		valeurs: [{id:0, label:"Deux", value:2}, {id:1, label:"Trois", value:3}, {id:2, label:"Quatre", value:4}, {id:3, label:"Cinq", value:5}, {id:4, label:"Six", value:6}, {id:5, label:"Sept", value:7}, {id:6, label:"Huit", value:8}, 
-		          {id:7, label:"Noeuf", value:9}, {id:8, label:"Dix", value:10}, {id:9, label:"Valet", value:11}, {id:10, label:"Dame", value:12}, {id:11, label:"Roi", value:13}, {id:12, label:"As", value:14}],
-		jokers: [{id:"JR", label:"Joker Rouge", style:"DarkMagenta", value:15}, {id:"JN", label:"Joker Noir", style:"DarkSlateBlue", value:15}]
+		couleurs:[{id:"C0", label:"Trêfle", style:"black"}, {id:"C1", label:"Carreau", style:"red"}, {id:"C2", label:"Pique", style:"black"}, {id:"C3", label:"Coeur", style:"red"}], 
+		valeurs: [{id:0, label:"2", value:2}, {id:1, label:"3", value:3}, {id:2, label:"4", value:4}, {id:3, label:"5", value:5}, {id:4, label:"6", value:6}, {id:5, label:"7", value:7}, {id:6, label:"8", value:8}, 
+		          {id:7, label:"9", value:9}, {id:8, label:"10", value:10}, {id:9, label:"j", value:11}, {id:10, label:"q", value:12}, {id:11, label:"k", value:13}, {id:12, label:"a", value:14}],
+		jokers: [{id:"CJR", label:"Joker", style:"red", value:15}, {id:"CJN", label:"Joker", style:"black", value:15}],
+		speciales:["C2-8","C2-9","C2-10","C2-11","C2-12"]
 		}
 var NB_JETON = 3;
 // VARIABLES
@@ -16,7 +17,7 @@ var sac = []; // {name:"", style:""}
 // tas de carte
 var tas = []; //  {id:"", name:"", style:"", special:boolean, valeur:int}
 // Personnages en jeu
-var personnages = []; // {div:node, id:0, name:"", nbjeton:"", reserve:[]};
+var personnages = []; // {div:node, id:0, name:"", nbjeton:"", reserve:[], atout:"0-0"};
 // Statut de la partie
 var gameStarted = false;
 // Historique des pioches
@@ -49,7 +50,7 @@ function init() {
 	
 	cleanZoneHombres();
 	
-	var marshal =  {div:null, id:0, name:"Marshall", nbjeton: 0, reserve:[]};
+	var marshal =  {div:null, id:0, name:"Marshall", nbjeton: 0, reserve:[], atout:"CJN"};
 	personnages[personnages.length] = marshal;
 	printHombre(marshal)
 	
@@ -130,7 +131,7 @@ function start() {
 	// on remplace ceux de la page
 	var tirage = true;
 	if (contextGlobal != null && contextGlobal.hombres != undefined) {
-		personnages = 	contextGlobal.hombres;
+		personnages = contextGlobal.hombres;
 		tirage = false;
 		cleanZoneHombres();
 	}
@@ -199,7 +200,7 @@ function getCartext() {
 	// dans notre page courante. Et on veut pas
 	for (var i = 0; i < personnages.length ; i ++) {
 		var cur = personnages[i];
-		var hh = {div:null, id:cur.id, name:cur.name, nbjeton:cur.nbjeton, reserve:cur.reserve};
+		var hh = {div:null, id:cur.id, name:cur.name, nbjeton:cur.nbjeton, reserve:cur.reserve, atout:cur.atout};
 		fullContexte.hombres[fullContexte.hombres.length] = hh;
 	}
 	var datexport = objectTo64(fullContexte);
@@ -225,15 +226,20 @@ function putHombre() {
 	var inputL = getEl(IDS.luck);
 	var nn = inputH.value.trim();
 	var pio = parseInt(inputL.value);
+
 	
 	if (nn.length == 0 ) {
 		return;
 	}
 	
-	var hh = {div:null, id:0, name:"", nbjeton:"", reserve:[]};
+	var hh = {div:null, id:0, name:"", nbjeton:"", reserve:[], atout:""};
 	hh.id = personnages.length;
 	hh.name = nn;
 	hh.nbjeton = NB_JETON + pio;
+	hh.atout = getEl("couleur").value;
+	if (hh.atout != "CJR" && hh.atout != "CJN") {
+		hh.atout += "-" + getEl("valeur").value;
+	}
 	personnages[personnages.length] = hh;
 	
 	// ajout affichage
@@ -273,8 +279,13 @@ function printHombre(hombre) {
 	divH.classList.add("name");
 	
 	var divN = addDivNode(divH);
-	divN.style = "margin-bottom: 5px";
 	addTextNode(divN, hombre.name)
+	
+	if (hombre.atout != undefined) {
+		divC = addDivNode(divH);
+		divC.classList.add("joker");
+		c = addImgNode(divC, hombre.atout, "carte");
+	}
 	
 	var divB = addDivNode(divH);
 	divH.classList.add("button");
@@ -308,7 +319,7 @@ function restcard(cardtext) {
 	// On construit le tas de CARTES
 	// Ajout des jokers
 	for (var i = 0; i < CARTES.jokers.length; i++) {
-		var cc = {id:"", name:"", value:0, special:false}
+		var cc = {id:"", name:"", value:0}
 		cc.id = CARTES.jokers[i].id;
 		cc.name = CARTES.jokers[i].label;
 		cc.style = CARTES.jokers[i].style;
@@ -320,19 +331,11 @@ function restcard(cardtext) {
 		var couleur = CARTES.couleurs[i];
 		for (var j = 0; j < CARTES.valeurs.length; j++) {
 			var val = CARTES.valeurs[j];
-			var cc = {id:"", name:"", style:"", value:0, special:false}
-			cc.id = "C"+couleur.id+"-"+val.id;
+			var cc = {id:"", name:"", style:"", value:0}
+			cc.id = couleur.id+"-"+val.id;
 			cc.name = val.label+" de "+couleur.label;
 			cc.style = couleur.style;
 			cc.value = val.value;
-			if (couleur.specials.length > 0) {
-				for (var k = 0; k < couleur.specials.length ; k++) {
-					if (cc.value == couleur.specials[k] ) {
-						cc.special = true;
-						break;
-					}
-				}
-			}
 			tas[tas.length] = cc;
 		}
 	}
@@ -352,8 +355,8 @@ function restcard(cardtext) {
 			if (pos != -1) {
 				var cc = tas.splice(pos, 1)[0];
 				histioche[histioche.length] = cc.id;
-				if (cc.special) {
-					printSpecial(cc);
+				if (CARTES.speciales.indexOf(cc.id) != -1) {
+					printSpecial();
 				}
 			}
 		}
@@ -367,7 +370,7 @@ function majNbCard() {
 	var node = getEl("pioche");
 	node.innerHTML = "";
 	for (var i=0; i < tas.length; i++) {
-		var p = addImgNode(node, {id:"CD"}, "carte");
+		var p = addImgNode(node, "CD", "carte");
 		p.style = "position:absolute; margin-left:" + 5*i + "px;";
 	}
 }
@@ -492,21 +495,36 @@ function piocheHistorique(npi, actor, collection) {
 	for (var ii=0; ii < picks.length; ii++) {
 		histioche[histioche.length] = picks[ii].id;
 		addPiochable(div, picks[ii], "carte");
-		if (picks[ii].special) {
-			printSpecial(picks[ii]);
+		if (CARTES.speciales.indexOf(picks[ii].id) != -1) {
+			printSpecial();
 		}
-		
 	}
-	
+	for (var ii=0; ii < picks.length; ii++) {
+		cur = picks[ii].id;
+		for (var p=0; p < personnages.length; p++) {
+				if (personnages[p].atout == cur) {
+					alert(personnages[p].name + " Rules !!");
+				}
+			}
+	}
 	return picks;
 }
 /**
- * Affichage d'une carte spéciale dans la zone
- * @param carte
+ * Affichage des cartes spéciale dans la zone
  */
-function printSpecial(carte) {
+function printSpecial() {
 	var spanSpecial = getEl(IDS.specials);
-	var p = addImgNode(spanSpecial, carte, "carte");
+	spanSpecial.innerHTML = "";
+	var count = 0;
+	for (s=0; s < CARTES.speciales.length; s++) {
+		if(histioche.indexOf(CARTES.speciales[s]) > -1){
+			addImgNode(spanSpecial, CARTES.speciales[s], "carte");
+			count++;
+		}			
+	}
+	if (count == CARTES.speciales.length) {
+		alert("Accrochez vous à vos bretelles, ca va secouer !!");
+	}
 }
 
 
@@ -554,18 +572,13 @@ function sacaj() {
 	}
 }
 
-function addPiochable(node, jeton, classe, hombre) {
-	var p = addImgNode(node, jeton, classe);
+function addPiochable(node, item, classe, hombre) {
+	var p = addImgNode(node, item.id, classe);
 	if (hombre != undefined) {
 		p.setAttribute("onclick", "removeJet(this,"+hombre.id+")");
 	}
 	return p;
 } 
-
-function addSpeciale(node, obj) {
-	var p = addImgNode(node, obj, "carte");
-} 
-
 
 function applyStyle(node, obj) {
 	node.style="color:"+obj.style+";";
