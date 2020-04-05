@@ -289,9 +289,9 @@ function printHombre(hombre) {
 	addTextNode(divN, hombre.name)
 	
 	if (hombre.atout != undefined) {
-		divC = addDivNode(divH);
+		var divC = addDivNode(divH);
 		divC.classList.add("joker");
-		c = addImgNode(divC, hombre.atout, "carte");
+		addImgNode(divC, hombre.atout, "carte");
 	}
 	
 	var divB = addDivNode(divH);
@@ -507,7 +507,7 @@ function piocheHistorique(npi, actor, collection) {
 		}
 	}
 	for (var ii=0; ii < picks.length; ii++) {
-		cur = picks[ii].id;
+		var cur = picks[ii].id;
 		for (var p=0; p < personnages.length; p++) {
 				if (personnages[p].atout == cur) {
 					alert(personnages[p].name + " Rules !!");
@@ -523,7 +523,7 @@ function printSpecial() {
 	var spanSpecial = getEl(IDS.specials);
 	spanSpecial.innerHTML = "";
 	var count = 0;
-	for (s=0; s < CARTES.speciales.length; s++) {
+	for (var s=0; s < CARTES.speciales.length; s++) {
 		if(histioche.indexOf(CARTES.speciales[s]) > -1){
 			addImgNode(spanSpecial, CARTES.speciales[s], "carte");
 			count++;
