@@ -80,11 +80,8 @@ function initiative() {
 }
 
 function selectAtout(select){
-	if(select.value == "CJR" || select.value == "CJN"){
-		getEl("valeur").disabled = true;
-	} else {
-		getEl("valeur").disabled = false;
-	}
+	var isJoker = (select.value == "CJR" || select.value == "CJN");
+	getEl("valeur").disabled = isJoker;
 }
 
 /**
@@ -140,6 +137,9 @@ function start() {
 	if (contextGlobal != null && contextGlobal.hombres != undefined) {
 		personnages = contextGlobal.hombres;
 		tirage = false;
+		if (contextGlobal.partieEnCours != undefined) {
+			tirage = !contextGlobal.partieEnCours;
+		}
 		cleanZoneHombres();
 	}
 
@@ -199,26 +199,48 @@ function enterSave() {
 
 
 function getCartext() {
-	
-	var fullContexte = {historique: histioche, sac: sac , hombres : [] };
+	// Ici on recopie l'état de la pioche et du sac
+	var fullContexte = {historique: histioche, sac: sac, hombres : [], partieEnCours: true};
+	// Pour la suite de la copie on recopie les hombres
+	getHombrext(fullContexte);
+}
+
+function getHombrext(exportData) {
+	if (exportData == undefined) {
+		exportData = {hombres : [], partieEnCours: false};
+	}
+		
 	// on va recopier les personnages, sans la div de la page
 	// si on copiait juste le contenu et qu'on vidait la div
 	// comme on recopie la référence de l'objet on aurait supprimé la div
 	// dans notre page courante. Et on veut pas
 	for (var i = 0; i < personnages.length ; i ++) {
 		var cur = personnages[i];
-		var hh = {div:null, id:cur.id, name:cur.name, nbjeton:cur.nbjeton, reserve:cur.reserve, atout:cur.atout};
-		fullContexte.hombres[fullContexte.hombres.length] = hh;
+		var hh = {div:null, id:cur.id, name:cur.name, nbjeton:cur.nbjeton, reserve:[], atout:cur.atout};
+		// Si la partie est en cours, on sauvegarde l'état des jetons, sinon non.
+		if (exportData.partieEnCours) {
+			hh.reserve = cur.reserve;
+		}
+		exportData.hombres[exportData.hombres.length] = hh;
 	}
-	var datexport = objectTo64(fullContexte);
-	//console.log(datexport);
-	// On va copier le code dans la zone de texte prévue
+
+	// export de la sauvegarde
+	copyToPasteBin(exportData);
+}
+
+
+function copyToPasteBin(object) {
+	// conversion objet
+	var datexport = objectTo64(object);
 	var exporHidden = getEl(IDS.exportCode);
 	exporHidden.value = datexport;
 	exporHidden.select();
 	console.log(document.execCommand( 'copy' ));
 	alert("CODE copié dans le presse papier !");
 }
+
+
+
 
 /**
  * Création d'un hombre
