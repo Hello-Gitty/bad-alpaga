@@ -128,19 +128,14 @@ function addTextNode(NodeParent, text) {
 	NodeParent.appendChild(node);
 }
 
-function addDivNodeFirst(NodeParent, text) {
-	var node = document.createElement("span");
+function addDivNodeFirst(NodeParent) {
+	var node = document.createElement("div");
 	if (NodeParent.childNodes.length > 0) {
 		NodeParent.insertBefore(node,NodeParent.childNodes[0]);
 	} else {
 		NodeParent.appendChild(node);
 	}
 	return node;
-}
-
-function addHrNodeFirst(NodeParent) {
-	var node = document.createElement("hr");
-	NodeParent.insertBefore(node,NodeParent.childNodes[0]);
 }
 
 /**

@@ -594,14 +594,15 @@ function putjet(type) {
 function cleanHisto() {
 	var divhisto = getEl(IDS.histo);
 	if (divhisto.childNodes.length > 0) {
-		divhisto.removeChild(divhisto.childNodes[0]);
+		divhisto.innerHTML = "";
 	}
 }
 
 function separeHisto() {
-	var divhisto = getEl(IDS.histo);
-	if (divhisto.childNodes.length > 0 && divhisto.childNodes[0].childNodes[0].tagName != "HR") {
-		addHrNodeFirst(divhisto.childNodes[0]);
+	var divhisto = getEl(IDS.histo);	
+	if (divhisto.childNodes.length > 0 && divhisto.childNodes[0].childNodes.length > 0) {
+		divhisto.childNodes[0].classList.add("separe");
+		addDivNodeFirst(divhisto);
 	}
 }
 

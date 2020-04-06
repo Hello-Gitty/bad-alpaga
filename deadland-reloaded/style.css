@@ -117,11 +117,11 @@ div[id=sac], div[id=histo-pioche], .hombre, div[id=pioche], #emmet, #mono, #mult
 	margin-left: 30%;
 }
 
-#histo-pioche hr {
+.separe {
+	display: inline-block;
 	width: 100%;
-    border: 0;
-    border-bottom: 1px solid gold;
-    padding: 5px 0;
+	border-top: 1px solid gold;
+	margin-top: 10px;
 }
 
 span[id=cartes] {
