@@ -8,6 +8,14 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body onload="init()">
+
+	<div id="modal">
+		<div id="deadhand" class="modal" ondblclick="this.style.display = 'none'">
+			<div>!! DEAD HAND !!</div>
+		</div>
+
+	</div>
+
 	<h2>LE PIOCHEUR DE LA MORT RELOADED</h2>
 	<div id="pregame">
 		<h3>Initialisation</h3>
@@ -104,7 +112,7 @@
 		<div id="historique">
 			<h3>Cartes speciales</h3>
 			<div id="emmet"></div>
-			<h3>Tirage <a onclick="cleanHisto()">clean</a></h3>
+			<h3>Tirage <a onclick="separeHisto()">separateur</a> <a onclick="cleanHisto()" style="float: right">clean</a> </h3>
 			<div id="histo-pioche"></div>
 		</div>
 	
@@ -114,11 +122,20 @@
 
 			<h3>Actions</h3>
 			<div id="action">
-				<select name="who" id="who"></select>
-				<input type="number" id="ip-pioche" min="1" value=1/>
-				<input type="button" id="piochetej" onclick="actionPiocheJeton()" value="Piocher Jeton" />
-				<input type="button" id="piochetrac" onclick="actionPiocheCarte()" value="Piocher Carte" />
-				<input type="button" id="bagare" onclick="initiative()" value="Initiative" />
+				<div id="mono">
+					<span>Lonesome Cowboy</span>
+					<br>
+					<select name="who" id="who"></select>
+					<input type="number" id="ip-pioche" min="1" value=1/>
+					<br>
+					<input type="button" id="piochetej" onclick="actionPiocheJeton()" value="Piocher Jeton" />
+					<input type="button" id="piochetrac" onclick="actionPiocheCarte()" value="Piocher Carte" />
+				</div>
+				<div id="multi">
+					<span>Full Gang</span>
+					<br>
+					<input type="button" id="bagare" onclick="initiative()" value="Initiative" />
+				</div>
 			</div>
 		</div>
 	</div>

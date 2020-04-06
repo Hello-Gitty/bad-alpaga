@@ -8,7 +8,7 @@ var CARTES = {
 		valeurs: [{id:0, label:"2", value:2}, {id:1, label:"3", value:3}, {id:2, label:"4", value:4}, {id:3, label:"5", value:5}, {id:4, label:"6", value:6}, {id:5, label:"7", value:7}, {id:6, label:"8", value:8}, 
 		          {id:7, label:"9", value:9}, {id:8, label:"10", value:10}, {id:9, label:"j", value:11}, {id:10, label:"q", value:12}, {id:11, label:"k", value:13}, {id:12, label:"a", value:14}],
 		jokers: [{id:"CJR", label:"Joker", style:"red", value:15}, {id:"CJN", label:"Joker", style:"black", value:15}],
-		speciales:["C2-8","C2-9","C2-10","C2-11","C2-12"]
+		deadhand:["C2-8","C2-9","C2-10","C2-11","C2-12"]
 		}
 var NB_JETON = 3;
 // VARIABLES
@@ -62,6 +62,8 @@ function init() {
 	getEl(IDS.luck).value = 0;
 	getEl(IDS.actor).value = 0;
 	getEl(IDS.apioche).value = 1;
+	
+	initDeadHand();
 }
 
 function cleanZoneHombres() {
@@ -313,7 +315,18 @@ function printHombre(hombre) {
 	if (hombre.atout != undefined) {
 		var divC = addDivNode(divH);
 		divC.classList.add("joker");
-		addImgNode(divC, hombre.atout, "carte");
+		addImgNode(divC, {id:hombre.atout}, "carte");
+		var modal = getEl("modal");
+		var divAtout = addDivNode(modal);
+		divAtout.id = "atout-" + hombre.name;
+		divAtout.classList.add("modal");
+		divAtout.classList.add("atout");
+		divAtout.setAttribute("ondblclick","this.style.display = 'none'");
+		addImgNode(divAtout, {id:hombre.atout});
+		var divRules = addDivNode(divAtout);
+		addTextNode(divRules, hombre.name);
+		addBrNode(divRules);
+		addTextNode(divRules, "Rules");				
 	}
 	
 	var divB = addDivNode(divH);
@@ -384,7 +397,7 @@ function restcard(cardtext) {
 			if (pos != -1) {
 				var cc = tas.splice(pos, 1)[0];
 				histioche[histioche.length] = cc.id;
-				if (CARTES.speciales.indexOf(cc.id) != -1) {
+				if (CARTES.deadhand.indexOf(cc.id) != -1) {
 					printSpecial();
 				}
 			}
@@ -399,7 +412,7 @@ function majNbCard() {
 	var node = getEl("pioche");
 	node.innerHTML = "";
 	for (var i=0; i < tas.length; i++) {
-		var p = addImgNode(node, "CD", "carte");
+		var p = addImgNode(node, {id:"CD"}, "carte");
 		p.style = "position:absolute; margin-left:" + 5*i + "px;";
 	}
 }
@@ -524,15 +537,15 @@ function piocheHistorique(npi, actor, collection) {
 	for (var ii=0; ii < picks.length; ii++) {
 		histioche[histioche.length] = picks[ii].id;
 		addPiochable(div, picks[ii], "carte");
-		if (CARTES.speciales.indexOf(picks[ii].id) != -1) {
+		if (CARTES.deadhand.indexOf(picks[ii].id) != -1) {
 			printSpecial();
 		}
 	}
 	for (var ii=0; ii < picks.length; ii++) {
-		var cur = picks[ii].id;
+		var cur = picks[ii];
 		for (var p=0; p < personnages.length; p++) {
-				if (personnages[p].atout == cur) {
-					alert(personnages[p].name + " Rules !!");
+				if (personnages[p].atout == cur.id) {
+					getEl("atout-" + personnages[p].name).style.display = "block";
 				}
 			}
 	}
@@ -545,17 +558,16 @@ function printSpecial() {
 	var spanSpecial = getEl(IDS.specials);
 	spanSpecial.innerHTML = "";
 	var count = 0;
-	for (var s=0; s < CARTES.speciales.length; s++) {
-		if(histioche.indexOf(CARTES.speciales[s]) > -1){
-			addImgNode(spanSpecial, CARTES.speciales[s], "carte");
+	for (var s=0; s < CARTES.deadhand.length; s++) {
+		if(histioche.indexOf(CARTES.deadhand[s]) > -1){
+			addImgNode(spanSpecial, {id:CARTES.deadhand[s]}, "carte");
 			count++;
 		}			
 	}
-	if (count == CARTES.speciales.length) {
-		alert("Accrochez vous à vos bretelles, ca va secouer !!");
+	if (count == CARTES.deadhand.length) {
+		getEl("deadhand").style.display = "block";
 	}
 }
-
 
 /**
  * Ajout de JETONS dans le tas et mélange
@@ -586,6 +598,13 @@ function cleanHisto() {
 	}
 }
 
+function separeHisto() {
+	var divhisto = getEl(IDS.histo);
+	if (divhisto.childNodes.length > 0 && divhisto.childNodes[0].childNodes[0].tagName != "HR") {
+		addHrNodeFirst(divhisto.childNodes[0]);
+	}
+}
+
 /**
  * Affiche le contenu du sac
  */
@@ -602,7 +621,7 @@ function sacaj() {
 }
 
 function addPiochable(node, item, classe, hombre) {
-	var p = addImgNode(node, item.id, classe);
+	var p = addImgNode(node, item, classe);
 	if (hombre != undefined) {
 		p.setAttribute("onclick", "removeJet(this,"+hombre.id+")");
 	}
@@ -664,4 +683,26 @@ function readObject64 (array64) {
 		}
 	}
 	return result;
+}
+
+function initDeadHand () {
+	var modal = getEl("deadhand");
+	
+	var size = CARTES.deadhand.length;
+	
+	var fullRotate = 70;
+	var fullHeight = 100;
+	var fullWidth = 400;
+	
+	var rotate = fullRotate / (size - 1);
+	var top = fullHeight / (size - 1);
+	var left = fullWidth / (size - 1);
+
+	for (var i = 0; i < size; i++) {
+		var img = addImgNode(modal, {id:CARTES.deadhand[i]});
+		var curRotate = rotate * (i) - fullRotate/2;
+		var curTop = Math.abs(top * (i) - fullHeight/2);
+		var curleft = left * (i) - fullWidth / 1.1;
+		img.style = "transform: rotate(" + curRotate + "deg); padding-top: " + curTop + "px; margin-left:" + curleft + "px";
+	}
 }

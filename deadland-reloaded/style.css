@@ -61,13 +61,67 @@ select {
 	font-family: "Carnevalee Freakshow";
 }
 
-div[id=sac], div[id=histo-pioche], .hombre, div[id=pioche], #emmet, #action, #start, #stop, #init {
+div[id=sac], div[id=histo-pioche], .hombre, div[id=pioche], #emmet, #mono, #multi, #start, #stop, #init {
 	border-left: 1px solid gold;
 	border-radius: 0 12px;
 }
 
-#action, #start, #stop, #init {
+#mono, #multi, #start, #stop, #init {
 	padding: 5px;
+}
+
+#action div {
+	float : left;
+	margin-right : 10px;
+}
+
+#action input {
+	margin-top: 5px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(24,111,5,0.5); /* Black w/ opacity */
+  text-align: center;
+  font-size : 100px;
+  padding-top : 50px;
+  text-shadow: #000000 2px 2px, #000000 -2px 2px, #000000 -2px -2px, #000000 2px -2px;
+}
+
+#deadhand div {
+	color: #B00000;
+}
+
+#deadhand img {
+	position: absolute;
+	margin-top:50px;
+}
+
+.atout div {
+	color : gold;
+	margin-left: 50px;
+	float: left;
+    padding-top: 100px;
+}
+
+.atout img {
+	float : left;
+	margin-left: 30%;
+}
+
+#histo-pioche hr {
+	width: 100%;
+    border: 0;
+    border-bottom: 1px solid gold;
+    padding: 5px 0;
 }
 
 span[id=cartes] {

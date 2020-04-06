@@ -98,8 +98,9 @@ function addSpanNode(NodeParent) {
 
 function addImgNode(NodeParent, item, classe) {
 	var img = addNode(NodeParent, "img");
+	img.alt = item.name;
 	img.classList.add(classe);
-	img.src = "static/" + item + ".png";
+	img.src = "static/" + item.id + ".png";
 	return img;
 }
 
@@ -128,13 +129,18 @@ function addTextNode(NodeParent, text) {
 }
 
 function addDivNodeFirst(NodeParent, text) {
-	var node = document.createElement("div");
+	var node = document.createElement("span");
 	if (NodeParent.childNodes.length > 0) {
 		NodeParent.insertBefore(node,NodeParent.childNodes[0]);
 	} else {
 		NodeParent.appendChild(node);
 	}
 	return node;
+}
+
+function addHrNodeFirst(NodeParent) {
+	var node = document.createElement("hr");
+	NodeParent.insertBefore(node,NodeParent.childNodes[0]);
 }
 
 /**
