@@ -3,18 +3,16 @@
 	src: url('static/Carnevalee-Freakshow.ttf');
 }
 
-/** 	background-color: #155806;
-	background: radial-gradient(#2e9119,#155806);
-	*/
-
 body {
-	background: radial-gradient(#186F05,#0E4502);
     font-family: "Carnevalee Freakshow";
-    margin: 20px;
-    border: 1px solid gold;
-    border-radius: 12px;
-    padding: 10px;
 	font-size: 20px;
+}
+
+.tapi {
+	background: radial-gradient(#186F05,#0E4502);
+	border: 1px solid gold;
+	border-radius: 12px;
+    padding: 10px;
 }
 
 input {
@@ -29,7 +27,7 @@ input[type="number"] {
     border: 0;
 }
 
-input[type="text"]:disabled {
+input[type="text"]:disabled, select:disabled {
 	background: #dddddd;
 }
 
@@ -51,6 +49,7 @@ input[type="text"] {
 
 input[type="button"] {
 	border-radius: 0 12px;
+	cursor: pointer;
 }
 
 select {
@@ -64,6 +63,11 @@ select {
 div[id=sac], div[id=histo-pioche], .hombre, div[id=pioche], #emmet, #mono, #multi, #start, #stop, #init {
 	border-left: 1px solid gold;
 	border-radius: 0 12px;
+}
+
+#content {
+	width: 1268px;
+    margin: 0 auto;
 }
 
 #mono, #multi, #start, #stop, #init {
@@ -90,6 +94,9 @@ div[id=sac], div[id=histo-pioche], .hombre, div[id=pioche], #emmet, #mono, #mult
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
   background-color: rgba(24,111,5,0.5); /* Black w/ opacity */
+}
+
+#modal .pioche {
   text-align: center;
   font-size : 100px;
   padding-top : 50px;
@@ -98,23 +105,23 @@ div[id=sac], div[id=histo-pioche], .hombre, div[id=pioche], #emmet, #mono, #mult
 
 #deadhand div {
 	color: #B00000;
+	margin-bottom:50px;
 }
 
 #deadhand img {
 	position: absolute;
-	margin-top:50px;
 }
 
 .atout div {
 	color : gold;
-	margin-left: 50px;
+	margin: 150px 0 0 50px;
 	float: left;
-    padding-top: 100px;
+	font-size: 100px;
 }
 
 .atout img {
 	float : left;
-	margin-left: 30%;
+	margin: 50px 0 0 30%;
 }
 
 .separe {
@@ -157,7 +164,7 @@ a {
 
 img.jeton {
 	width: 60px;
-	margin : 1px;
+	cursor: pointer;
 }
 
 img.carte {
@@ -204,10 +211,16 @@ img.carte {
 	margin: 0 0 1px 0;
 }
 
-#init_hombre div {
+#initHombre div, #updateHombre div {
 	float:left;
 	margin-right: 10px;
     text-align: center;
+}
+
+#updateHombre {
+	width : 630px;
+	margin : 200px auto;
+	padding : 20px;
 }
 
 .hombre {
@@ -242,24 +255,14 @@ img.carte {
 }
 
 .jetons {
-	height: 72px;
-	padding-top : 25px;
-    overflow: overlay;
+	height: 62px;
+	padding-top: 25px;
+	overflow: hidden;
 }
 
-/* width */
-::-webkit-scrollbar {
-  width: 15px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px grey;
-  border-radius: 10px;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #0E4502;
-  border-radius: 10px;
+.close {
+	float: right;
+    margin: -20px -15px;
+    color: gold;
+    cursor: pointer;
 }

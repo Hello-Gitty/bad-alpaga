@@ -7,137 +7,134 @@
 <script type="text/javascript" src="deadland.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
-<body onload="init()">
+<body onload="init()" class="tapi">
 
-	<div id="modal">
-		<div id="deadhand" class="modal" ondblclick="this.style.display = 'none'">
+	<div id="modal">	
+		<div id="deadhand" class="modal pioche" ondblclick="this.style.display = 'none'">
 			<div>!! DEAD HAND !!</div>
 		</div>
-
-	</div>
-
-	<h2>LE PIOCHEUR DE LA MORT RELOADED</h2>
-	<div id="pregame">
-		<h3>Initialisation</h3>
-		<div id="init">
-			<div style="display: inline-block">
-				<h4>Jetons</h4>
-				<div style="float: left; margin-left:20px">
-					<li><span>Blanc</span></li>
-					<li><span>Rouge</span></li>
-					<li><span>Bleu</span></li>
-					<li><span>Legendaire</span></li>
-				</div>
-				<div style="margin-left: 130px">
-					: <input type="number" id="ip-blanc" min="0" /><br>
-					: <input type="number" id="ip-rouge" min="0" /><br>
-					: <input type="number" id="ip-bleu" min="0" /><br>
-					: <input type="number" id="ip-legendaire" min="0" /><br>
-				</div>
-			</div>
-			<div id="init_hombre">
+		<div class="modal" id="modalHombre">
+			<div id="updateHombre" class="tapi">
+				<span class="close" onclick="hide('modalHombre')">x</span>
 				<h4>Hombre</h4>
+				<input id="upId" type="hidden"/>
 				<div>
 					Nom<br>
-					<input id="ip-hombre" type="text" onkeydown="enterHombre()" />
+					<input id="upName" type="text" disabled="true"/>
 				</div>	
 				<div>
 					Atout<br>
-					<select name="couleur" id="couleur" onkeydown="enterHombre()" onchange="selectAtout(this)">
-						<option value="C0">Trefle</option>
-						<option value="C1">Carreau</option>
-						<option value="C2">Pique</option>
-						<option value="C3">Coeur</option>
-						<option value="CJR">Joker Rouge</option>
-						<option value="CJN">Joker Noir</option>
-					</select>				
-					<select name="valeur" id="valeur" onkeydown="enterHombre()">
-						<option value="0">2</option>
-						<option value="1">3</option>
-						<option value="2">4</option>
-						<option value="3">5</option>
-						<option value="4">6</option>
-						<option value="5">7</option>
-						<option value="6">8</option>
-						<option value="7">9</option>
-						<option value="8">10</option>
-						<option value="9">Valet</option>
-						<option value="10">Dame</option>
-						<option value="11">Roi</option>
-						<option value="12">As</option>
-						<!-- <option value="-99">Joueur Préféré (kéké)</option> -->
-					</select>
+					<select class="couleur" id="upCouleur" onchange="selectAtout(this)"></select>				
+					<select class="valeur" id="upValeur" ></select>
 				</div>	
 				<div>
-					Jetons<br>
-					<select name="chance" id="luck" onkeydown="enterHombre()">
-						<option value="-2">malchanceux + mauvais reve</option>
-						<option value="-1">malchanceux / mauvais reve</option>
-						<option value="0" selected>Normal</option>
-						<option value="1">Chanceux</option>
-						<option value="2">Tres chanceux</option>
-						<!-- <option value="-99">Joueur Préféré (kéké)</option> -->
-					</select>
+					Chance<br>
+					<select class="chance" id="upLuck"></select>
 				</div>
 				<br>
-				<input type="button" id="addHombre" onclick="putHombre()" value="Ajouter" />
+				<input type="button" id="upHombre" onclick="updateHombre()" value="Modifier" />
 			</div>
 		</div>
 	</div>
 
-	<h3>Controle</h3>
-	<div id="start">
-		<label for="context">Import Sauvegarde </label><input type="text" id="context" onkeydown="enterSave()" />
-		<input id="ip-start" type="button" value="Debuter Partie" onclick="start()" />
-	</div>
-	<div id="stop">
-		<input type="button" onclick="init()" value="Reset" />
-		<input type="button" onclick="getCartext()" value="Sauvegarde" />
-		<input type="button" onclick="getHombrext()" value="Export hombres" />
-		<input type="text" id="export" readonly />
-	</div>
+	<h2>LE PIOCHEUR DE LA MORT RELOADED</h2>
 	
-	<div id="tirage">
-		<div id="jetons">
-			<h3>Jetons <a href="legende.html" target="_blank">legende</a></h3>
-			<div id="sac"></div>
-		</div>
-		<div id="cartes">
-			<h3>Pioche <a onclick="restcard()">nouvelle donne</a></h3>
-			<div id="pioche"></div>		
-		</div> 
-	</div>
+	<div id="content">
 	
-	<div id="partie">
-		<div id="historique">
-			<h3>Cartes speciales</h3>
-			<div id="emmet"></div>
-			<h3>Tirage <a onclick="separeHisto()">separateur</a> <a onclick="cleanHisto()" style="float: right">clean</a> </h3>
-			<div id="histo-pioche"></div>
-		</div>
-	
-		<div id="joueur">
-			<h3>Hombres</h3>
-			<div id="hombres"></div>
-
-			<h3>Actions</h3>
-			<div id="action">
-				<div id="mono">
-					<span>Lonesome Cowboy</span>
-					<br>
-					<select name="who" id="who"></select>
-					<input type="number" id="ip-pioche" min="1" value=1/>
-					<br>
-					<input type="button" id="piochetej" onclick="actionPiocheJeton()" value="Piocher Jeton" />
-					<input type="button" id="piochetrac" onclick="actionPiocheCarte()" value="Piocher Carte" />
+		<div id="pregame">
+			<h3>Initialisation</h3>
+			<div id="init">
+				<div style="display: inline-block">
+					<h4>Jetons</h4>
+					<div style="float: left; margin-left:20px">
+						<li><span>Blanc</span></li>
+						<li><span>Rouge</span></li>
+						<li><span>Bleu</span></li>
+						<li><span>Legendaire</span></li>
+					</div>
+					<div style="margin-left: 130px">
+						: <input type="number" id="ip-blanc" min="0" /><br>
+						: <input type="number" id="ip-rouge" min="0" /><br>
+						: <input type="number" id="ip-bleu" min="0" /><br>
+						: <input type="number" id="ip-legendaire" min="0" /><br>
+					</div>
 				</div>
-				<div id="multi">
-					<span>Full Gang</span>
+				<div id="initHombre">
+					<h4>Hombre</h4>
+					<div>
+						Nom<br>
+						<input id="ip-hombre" type="text"/>
+					</div>	
+					<div>
+						Atout<br>
+						<select class="couleur" id="couleur" onchange="selectAtout(this)"></select>				
+						<select class="valeur" id="valeur"></select>
+					</div>	
+					<div>
+						Chance<br>
+						<select class="chance" id="luck"></select>
+					</div>
 					<br>
-					<input type="button" id="bagare" onclick="initiative()" value="Initiative" />
+					<input type="button" id="addHombre" onclick="putHombre()" value="Ajouter" />
 				</div>
 			</div>
 		</div>
+
+		<h3>Controle</h3>
+		<div id="start">
+			<label for="context">Import Sauvegarde </label><input type="text" id="context" onkeydown="enterSave()" />
+			<input id="ip-start" type="button" value="Debuter Partie" onclick="start()" />
+		</div>
+		<div id="stop">
+			<input type="button" onclick="init()" value="Reset" />
+			<input type="button" onclick="getCartext()" value="Sauvegarde" />
+			<input type="button" onclick="getHombrext()" value="Export hombres" />
+			<input type="text" id="export" readonly />
+		</div>
+		
+		<div id="tirage">
+			<div id="jetons">
+				<h3>Jetons <a href="legende.html" target="_blank">legende</a></h3>
+				<div id="sac"></div>
+			</div>
+			<div id="cartes">
+				<h3>Pioche <a onclick="restcard()">nouvelle donne</a></h3>
+				<div id="pioche"></div>		
+			</div> 
+		</div>
+		
+		<div id="partie">
+			<div id="historique">
+				<h3>Cartes speciales</h3>
+				<div id="emmet"></div>
+				<h3>Tirage <a onclick="separeHisto()">separateur</a> <a onclick="cleanHisto()" style="float: right">clean</a> </h3>
+				<div id="histo-pioche"></div>
+			</div>
+		
+			<div id="joueur">
+				<h3>Hombres</h3>
+				<div id="hombres"></div>
+
+				<h3>Actions</h3>
+				<div id="action">
+					<div id="mono">
+						<span>Lonesome Cowboy</span>
+						<br>
+						<select name="who" id="who"></select>
+						<input type="number" id="ip-pioche" min="1" value=1/>
+						<br>
+						<input type="button" id="piochetej" onclick="actionPiocheJeton()" value="Piocher Jeton" />
+						<input type="button" id="piochetrac" onclick="actionPiocheCarte()" value="Piocher Carte" />
+					</div>
+					<div id="multi">
+						<span>Full Gang</span>
+						<br>
+						<input type="button" id="bagare" onclick="initiative()" value="Initiative" />
+					</div>
+				</div>
+			</div>
+		</div>
+	
 	</div>
 </body>
 </html>

@@ -4,12 +4,13 @@ var IDS = {instart:"ip-start", sac:"sac", histo:"histo-pioche", luck:"luck", inh
 // CONSTANTES
 var JETONS = [{id:"J0", name:"blanc", nb:20, mod:0, style:"ivory"}, {id:"J1", name:"rouge", nb:10, mod:0, style:"darkred"}, {id:"J2", name:"bleu", nb:5, mod:0, style:"darkblue"}, {id:"J3", name:"legendaire", nb: 0, mod:0, style:"gold"}] ;
 var CARTES = {
-		couleurs:[{id:"C0", label:"Trêfle", style:"black"}, {id:"C1", label:"Carreau", style:"red"}, {id:"C2", label:"Pique", style:"black"}, {id:"C3", label:"Coeur", style:"red"}], 
+		couleurs:[{id:"C0", label:"Trefle", style:"black"}, {id:"C1", label:"Carreau", style:"red"}, {id:"C2", label:"Pique", style:"black"}, {id:"C3", label:"Coeur", style:"red"}], 
 		valeurs: [{id:0, label:"2", value:2}, {id:1, label:"3", value:3}, {id:2, label:"4", value:4}, {id:3, label:"5", value:5}, {id:4, label:"6", value:6}, {id:5, label:"7", value:7}, {id:6, label:"8", value:8}, 
-		          {id:7, label:"9", value:9}, {id:8, label:"10", value:10}, {id:9, label:"j", value:11}, {id:10, label:"q", value:12}, {id:11, label:"k", value:13}, {id:12, label:"a", value:14}],
-		jokers: [{id:"CJR", label:"Joker", style:"red", value:15}, {id:"CJN", label:"Joker", style:"black", value:15}],
+		          {id:7, label:"9", value:9}, {id:8, label:"10", value:10}, {id:9, label:"Valet", value:11}, {id:10, label:"Reine", value:12}, {id:11, label:"Roi", value:13}, {id:12, label:"As", value:14}],
+		jokers: [{id:"CJR", label:"Joker Rouge", style:"red", value:15}, {id:"CJN", label:"Joker Noir", style:"black", value:15}],
 		deadhand:["C2-8","C2-9","C2-10","C2-11","C2-12"]
-		}
+		};
+var CHANCES = [{value:2, label:"Tres Chanceux"}, {value:1, label:"Chanceux"}, {value:0, label:"Normal", selected:true}, {value:-1, label:"Malchanceux / Mauvais reve"}, {value:-2, label:"Malchanceux + Mauvais reve"}];
 var NB_JETON = 3;
 // VARIABLES
 // Sac de jeton
@@ -63,7 +64,41 @@ function init() {
 	getEl(IDS.actor).value = 0;
 	getEl(IDS.apioche).value = 1;
 	
+	initSelect();	
 	initDeadHand();
+}
+
+function initSelect() {
+	var selects = document.getElementsByClassName("couleur");
+	
+	for (var s=0; s < selects.length; s++) {
+		for (var i=0; i < CARTES.couleurs.length; i++) {
+			addOption(selects[s], CARTES.couleurs[i].label, CARTES.couleurs[i].id);
+		}
+		for (var i=0; i < CARTES.jokers.length; i++) {
+			addOption(selects[s], CARTES.jokers[i].label, CARTES.jokers[i].id);
+		}
+	}
+	
+	selects = document.getElementsByClassName("valeur");
+	
+	for (var s=0; s < selects.length; s++) {
+		for (var i = CARTES.valeurs.length-1; i >= 0; i--) {
+			addOption(selects[s], CARTES.valeurs[i].label, CARTES.valeurs[i].id);
+		}
+	}
+	
+	selects = document.getElementsByClassName("chance");
+	
+	for (var s=0; s < selects.length; s++) {
+		for (var i=0; i < CHANCES.length; i++) {
+			var opt = addOption(selects[s], CHANCES[i].label, CHANCES[i].value);
+			if (CHANCES[i].selected) {
+				opt.setAttribute("selected", "true");
+			}
+		}
+	}
+	
 }
 
 function cleanZoneHombres() {
@@ -83,7 +118,7 @@ function initiative() {
 
 function selectAtout(select){
 	var isJoker = (select.value == "CJR" || select.value == "CJN");
-	getEl("valeur").disabled = isJoker;
+	select.nextSibling.nextSibling.disabled = isJoker;
 }
 
 /**
@@ -97,6 +132,7 @@ function butttonStatus() {
 	}
 	getEl(IDS.instart).disabled = gameStarted;
 	getEl(IDS.puthombre).disabled = gameStarted;
+	getEl("upHombre").disabled = false;
 }
 
 
@@ -169,17 +205,17 @@ function start() {
 
 function masqueZoneInit() {
 	if (gameStarted) {
-		getEl(IDS.zoneinit).style.display = "none";
+		hide(IDS.zoneinit);
 		getEl("tirage").style.display = "table";
-		getEl("start").style.display = "none";
-		getEl("stop").style.display = "block";
-		getEl("historique").style.display = "block";
+		hide("start");
+		show("stop");
+		show("historique");
 	} else {
-		getEl(IDS.zoneinit).style.display = "block";
-		getEl("tirage").style.display = "none";
-		getEl("start").style.display = "block";
-		getEl("stop").style.display = "none";
-		getEl("historique").style.display = "none";
+		show(IDS.zoneinit);
+		hide("tirage");
+		show("start");
+		hide("stop");
+		hide("historique");
 	}
 	
 }
@@ -311,8 +347,12 @@ function printHombre(hombre) {
 	
 	var divN = addDivNode(divH);
 	addTextNode(divN, hombre.name)
+	divN.setAttribute("ondblclick", "openUpdate(" + hombre.id + ")");
 	
 	if (hombre.atout != undefined) {
+		if (getEl("atout-" + hombre.name) != undefined) {
+			getEl("atout-" + hombre.name).remove();
+		}
 		var divC = addDivNode(divH);
 		divC.classList.add("joker");
 		addImgNode(divC, {id:hombre.atout}, "carte");
@@ -321,8 +361,9 @@ function printHombre(hombre) {
 		divAtout.id = "atout-" + hombre.name;
 		divAtout.classList.add("modal");
 		divAtout.classList.add("atout");
-		divAtout.setAttribute("ondblclick","this.style.display = 'none'");
-		addImgNode(divAtout, {id:hombre.atout});
+		divAtout.setAttribute("ondblclick","hide('" + divAtout.id + "')");
+		var img = addImgNode(divAtout, {id:hombre.atout});
+		img.setAttribute("onclick","hide('" + divAtout.id + "')");
 		var divRules = addDivNode(divAtout);
 		addTextNode(divRules, hombre.name);
 		addBrNode(divRules);
@@ -339,11 +380,28 @@ function printHombre(hombre) {
 	buttonCarte.disabled = !gameStarted;
 	buttonCarte.style="margin-left: 2px;"
 	buttonCarte.setAttribute("onclick","piocheUnitCarte("+hombre.id+")");
-
+	
 	var divJ = addDivNode(dd);
 	divJ.classList.add("jetons");
-	for (var i = 0; i < hombre.reserve.length; i++) {
-		addPiochable(divJ, hombre.reserve[i], "jeton", hombre);
+	divJ.id = "jetons-" + hombre.id;
+	printJeton(hombre);
+	
+}
+
+function printJeton(hombre) {
+	var divJ = getEl("jetons-" + hombre.id);
+	divJ.innerHTML = "";
+	
+	
+	for (var j = 0; j < JETONS.length; j++) {
+		var decalage = 5;
+		for (var i = 0; i < hombre.reserve.length; i++) {
+			if (hombre.reserve[i].id == JETONS[j].id) {
+				var jeton = addPiochable(divJ, hombre.reserve[i], "jeton", hombre);
+				jeton.style = "margin-left:" + decalage + "px";
+				decalage = -48;
+			}
+		}
 	}
 }
 
@@ -419,7 +477,6 @@ function majNbCard() {
 
 function removeJet(el, id) {
 	var name = el.alt;
-	el.remove();
 	var notej = search(JETONS, name);
 	var hombre = searchbyid(personnages, id);
 	// On supprime un jeton de la couleur pour l'hombre
@@ -438,6 +495,8 @@ function removeJet(el, id) {
 	if (notej != null) {
 		sac[sac.length] = {id:notej.id, name:notej.name, style:notej.style};	
 	}
+	printJeton(hombre);
+	
 	sacaj();
 } 
 /**
@@ -460,7 +519,7 @@ function piocheJeton(nb, idhombre) {
 	var picks = pioche(nb, actor, sac);
 	if (hombre && picks != undefined) {
 		actor.reserve = actor.reserve.concat(picks);
-		printHombre(actor);
+		printJeton(actor);
 	}
 	sacaj();
 }
@@ -545,7 +604,7 @@ function piocheHistorique(npi, actor, collection) {
 		var cur = picks[ii];
 		for (var p=0; p < personnages.length; p++) {
 				if (personnages[p].atout == cur.id) {
-					getEl("atout-" + personnages[p].name).style.display = "block";
+					show("atout-" + personnages[p].name);
 				}
 			}
 	}
@@ -565,7 +624,7 @@ function printSpecial() {
 		}			
 	}
 	if (count == CARTES.deadhand.length) {
-		getEl("deadhand").style.display = "block";
+		show("deadhand");
 	}
 }
 
@@ -629,12 +688,46 @@ function addPiochable(node, item, classe, hombre) {
 	return p;
 } 
 
-function applyStyle(node, obj) {
-	node.style="color:"+obj.style+";";
-	node.name=obj.name;
-	return node;
+function openUpdate(id) {
+	getEl("upId").value = id;
+	getEl("upName").value = personnages[id].name;
+	
+	var atout = personnages[id].atout.split("-");
+	getEl("upCouleur").value = atout[0];
+	if (atout.length > 1) {
+		getEl("upValeur").value = atout[1];
+	}
+	selectAtout(getEl("upCouleur"));
+
+	if (id != 0) {
+		getEl("upLuck").value = personnages[id].nbjeton - NB_JETON;
+		getEl("upLuck").disabled = false;
+	} else {
+		getEl("upLuck").value = -99;
+		getEl("upLuck").disabled = true;
+	}
+	
+	show("modalHombre");
 }
 
+function updateHombre() {
+	
+	var hombre = personnages[getEl("upId").value];
+
+	hombre.atout = getEl("upCouleur").value;
+
+	if (hombre.atout != "CJR" && hombre.atout != "CJN") {
+		hombre.atout += "-" + getEl("upValeur").value;
+	}
+
+	if (hombre.id != 0) {
+		hombre.nbjeton = parseInt(getEl("upLuck").value) + NB_JETON;
+	}
+	
+	printHombre(hombre);
+	hide("modalHombre");
+	
+}
 
 // TODO Faire fonction ajout du style d'un span (pour faire des affiaches en fonction de la zone. 
 
@@ -690,20 +783,30 @@ function initDeadHand () {
 	var modal = getEl("deadhand");
 	
 	var size = CARTES.deadhand.length;
-	
-	var fullRotate = 70;
-	var fullHeight = 100;
-	var fullWidth = 400;
-	
-	var rotate = fullRotate / (size - 1);
-	var top = fullHeight / (size - 1);
-	var left = fullWidth / (size - 1);
 
 	for (var i = 0; i < size; i++) {
 		var img = addImgNode(modal, {id:CARTES.deadhand[i]});
-		var curRotate = rotate * (i) - fullRotate/2;
-		var curTop = Math.abs(top * (i) - fullHeight/2);
-		var curleft = left * (i) - fullWidth / 1.1;
-		img.style = "transform: rotate(" + curRotate + "deg); padding-top: " + curTop + "px; margin-left:" + curleft + "px";
+		img.setAttribute("onclick","hide('deadhand')");
+		
+		var curRotate = calculRotation(size, i);
+		var curTop = calculDelageTop(size, i);
+		var curleft = calculDelageLeft(size, i);
+		
+		img.style = "transform: rotate(" + curRotate + "deg); margin-top: " + curTop + "px; margin-left:" + curleft + "px";
 	}
+}
+
+function calculRotation(nbItem, curId) {
+	var fullRotate = 70;
+	return fullRotate / (nbItem - 1) * curId - fullRotate/2;
+}
+
+function calculDelageTop(nbItem, curId) {
+	var fullHeight = 100;
+	return fullHeight / (nbItem - 1) * (curId-(nbItem-1)/2) * (curId-(nbItem-1)/2);
+}
+
+function calculDelageLeft(nbItem, curId) {
+	var fullWidth = 400;
+	return fullWidth / (nbItem - 1) * curId - fullWidth / 1.1;
 }

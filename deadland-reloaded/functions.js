@@ -17,20 +17,6 @@ function getValInt(id) {
 }
 
 /**
- * Fonction d'arrondi
- * @param cc nombre a arrondir
- * @returns {Number} nombre arrondi a 1 chiffre après la virgule
- */
-function round(cc, nb) {
-	if (nb == null) {
-		nb = 1;
-	}
-	nb = Math.pow(10, nb);	
-	
-	return Math.round(cc*nb)/nb;
-}
-
-/**
  * Fonction de base pour ajouter un noeud d'un type
  * 
  * @param NodeParent
@@ -81,6 +67,7 @@ function addOption(SelectParent, libelle, value) {
 	var node = addNode(SelectParent, "option");
 	addTextNode(node, libelle);
 	node.value = value;
+	return node;
 }
 
 
@@ -102,25 +89,6 @@ function addImgNode(NodeParent, item, classe) {
 	img.classList.add(classe);
 	img.src = "static/" + item.id + ".png";
 	return img;
-}
-
-function addTableNode(NodeParent) {
-	var node = addNode(NodeParent, "table");
-	return node;
-}
-
-function addTrNode(NodeParent) {
-	var node = addNode(NodeParent, "tr");
-	return node;
-}
-function addThNode(NodeParent) {
-	var node = addNode(NodeParent, "th");
-	return node;
-}
-
-function addTdNode(NodeParent) {
-	var node = addNode(NodeParent, "td");
-	return node;
 }
 
 function addTextNode(NodeParent, text) {
@@ -152,4 +120,42 @@ function shuffle(a) {
 
 function random(min, max) {
 	 return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * pick un jeton du sac
+ * @returns
+ */
+function pick(collection) {
+	if (collection.length > 0) {
+		var pick = random(0, collection.length-1);
+		return collection.splice(pick, 1)[0];
+	}
+	return null;
+}
+
+function search(list, nom) {
+	for (var i = 0; i < list.length; i++) {
+		if (list[i].name == nom) {
+			return list[i];
+		}
+	}
+	return null;
+}
+
+function searchbyid(list, id) {
+	for (var i = 0; i < list.length; i++) {
+		if (list[i].id == id) {
+			return list[i];
+		}
+	}
+	return null;
+}
+
+function hide(id) {
+	getEl(id).style.display = 'none';
+}
+
+function show(id) {
+	getEl(id).style.display = 'block';
 }
