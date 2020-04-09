@@ -70,8 +70,8 @@ function init() {
 
 function initSelect() {
 	var selects = document.getElementsByClassName("couleur");
-	
 	for (var s=0; s < selects.length; s++) {
+		selects[s].innerHTML = "";
 		for (var i=0; i < CARTES.couleurs.length; i++) {
 			addOption(selects[s], CARTES.couleurs[i].label, CARTES.couleurs[i].id);
 		}
@@ -81,16 +81,16 @@ function initSelect() {
 	}
 	
 	selects = document.getElementsByClassName("valeur");
-	
 	for (var s=0; s < selects.length; s++) {
+		selects[s].innerHTML = "";
 		for (var i = CARTES.valeurs.length-1; i >= 0; i--) {
 			addOption(selects[s], CARTES.valeurs[i].label, CARTES.valeurs[i].id);
 		}
 	}
 	
 	selects = document.getElementsByClassName("chance");
-	
 	for (var s=0; s < selects.length; s++) {
+		selects[s].innerHTML = "";
 		for (var i=0; i < CHANCES.length; i++) {
 			var opt = addOption(selects[s], CHANCES[i].label, CHANCES[i].value);
 			if (CHANCES[i].selected) {
