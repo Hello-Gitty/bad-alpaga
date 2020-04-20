@@ -112,6 +112,15 @@ div[id=sac], div[id=histo-pioche], .hombre, div[id=pioche], #emmet, #mono, #mult
 	position: absolute;
 }
 
+#legende .jeton {
+	float: left;
+	margin: 30px 0 0 30px;
+}
+
+#legende ol {
+	margin-left: 60px;
+}
+
 .atout div {
 	color : gold;
 	margin: 150px 0 0 50px;
