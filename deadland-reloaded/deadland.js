@@ -692,13 +692,15 @@ function openUpdate(id) {
 	getEl("upId").value = id;
 	getEl("upName").value = personnages[id].name;
 	
-	var atout = personnages[id].atout.split("-");
-	getEl("upCouleur").value = atout[0];
-	if (atout.length > 1) {
-		getEl("upValeur").value = atout[1];
+	if (personnages[id].atout != undefined) {
+		var atout = personnages[id].atout.split("-");
+		getEl("upCouleur").value = atout[0];
+		if (atout.length > 1) {
+			getEl("upValeur").value = atout[1];
+		}
+		selectAtout(getEl("upCouleur"));
 	}
-	selectAtout(getEl("upCouleur"));
-
+	
 	if (id != 0) {
 		getEl("upLuck").value = personnages[id].nbjeton - NB_JETON;
 		getEl("upLuck").disabled = false;
