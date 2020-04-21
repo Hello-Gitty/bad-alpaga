@@ -23,6 +23,8 @@ var personnages = []; // {div:node, id:0, name:"", nbjeton:"", reserve:[], atout
 var gameStarted = false;
 // Historique des pioches
 var histioche = [];
+// Statu d'ajout d'un séparateur
+
 
 
 /**
@@ -111,6 +113,8 @@ function cleanZoneHombres() {
 
 
 function initiative() {
+	separeHisto();
+	
 	for (var i = 0; i <personnages.length; i++) {
 		piocheUnitCarte(personnages[i].id);
 	}
