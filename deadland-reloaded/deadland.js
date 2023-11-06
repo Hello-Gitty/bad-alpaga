@@ -23,7 +23,8 @@ var personnages = []; // {div:node, id:0, name:"", nbjeton:"", reserve:[], atout
 var gameStarted = false;
 // Historique des pioches
 var histioche = [];
-
+// Indicateur si la dead hand a été affichée ou non
+var deadHanded = false;
 
 
 /**
@@ -414,6 +415,7 @@ function printJeton(hombre) {
  * @param contexte si le contexte est présent, on va retirer les cartes dont les id sont dans le contexte
  */
 function restcard(cardtext) {
+    deadHanded = false;
 	histioche = [];
 	tas = [];
 	getEl(IDS.specials).innerHTML = "";
@@ -540,6 +542,11 @@ function piocheUnitCarte(idHombre) {
 }
 
 function piocheCarte(nb,idHombre) {
+    // avant de piocher si la deadhand a été affichée, on restart le paquet
+    if (deadHanded) {
+        restcard()
+    }
+
 	var actor = searchbyid(personnages, idHombre);
 	if (actor == null) {
 		actor = {name:"Marshal"};
@@ -627,6 +634,8 @@ function printSpecial() {
 		}			
 	}
 	if (count == CARTES.deadhand.length) {
+	    // On flague la deadhand
+	    deadHanded = true;
 		show("deadhand");
 	}
 }
